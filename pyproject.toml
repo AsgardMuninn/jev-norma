@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jev-norma"
+version = "0.1.0"
+description = "Triaje normativo LatAm: normaliza cláusulas de una política de datos / términos en español (0-IA) y las clasifica con Jev (System One) en choice [obligacion|riesgo|sin_accion] + confidence calibrada, con cola de revisión humana fail-open."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "JuanJoseGonGi" }]
+keywords = ["jev", "system-one", "typesafe", "ley-1581", "latam", "mcp", "legal", "nlp"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Text Processing :: Linguistic",
+]
+dependencies = []
+
+[project.optional-dependencies]
+pdf = ["pypdf>=3"]
+mcp = []
+dev = ["pytest>=7"]
+
+[project.scripts]
+jev-norma = "jev_norma.cli:main"
+jev-norma-mcp = "jev_norma.mcp:main"
+
+[tool.setuptools]
+packages = ["jev_norma"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
