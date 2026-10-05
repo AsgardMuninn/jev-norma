@@ -52,7 +52,13 @@ jev-norma --selftest                          # tests unitarios (sin API)
 jev-norma politica.html --no-api              # solo normalización (sin gate)
 jev-norma politica.html [--sample 12]         # normaliza + gate Jev real
 jev-norma politica.pdf --output reporte.json
+jev-norma --url https://…/politica.html       # fetch resiliente a WAF + normaliza + gate
 ```
+
+`--url` descarga el documento con un fetcher resiliente (User-Agent de navegador real,
+rotación de UA ante 403/5xx, reintento de fallos transitorios, declinación clara en 404)
+— el patrón con el que se evita el bot-protection que responde 403/000 a `urllib` pelado
+en bancos/SIC/superintendencias colombianas. Luego corre el mismo pipeline local.
 
 ## MCP server
 

@@ -19,6 +19,7 @@ from pathlib import Path
 from .gate import sanitize_clause
 from .normalizer import MAX_CLAUSE_CHARS, segment_plain_text
 from .pipeline import build_report, detect_input, gate, normalize_document, sample_indices
+from .fetch import fetch_html
 
 
 def _selftest() -> bool:
@@ -64,6 +65,7 @@ def _selftest() -> bool:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="jev-norma: triaje normativo LatAm (gate System One)")
     ap.add_argument("doc", nargs="?", help="documento HTML o PDF")
+    ap.add_argument("--url", default=None, help="URL de documento legal (fetcher resiliente a WAF)")
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--no-api", action="store_true", help="solo normalización (sin gate Jev)")
     ap.add_argument("--sample", type=int, default=12, help="cláusulas al gate (0 = todas)")
@@ -72,14 +74,26 @@ def main(argv=None) -> int:
 
     if args.selftest:
         return 0 if _selftest() else 1
-    if not args.doc:
+    if not args.doc and not args.url:
         ap.print_usage()
         return 2
 
-    path = Path(args.doc)
-    if not path.exists():
-        print(f"error: no existe {path}", file=sys.stderr)
-        return 2
+    if args.url:
+        if args.doc:
+            print("error: usa --url O doc, no ambos", file=sys.stderr)
+            return 2
+        try:
+            raw = fetch_html(args.url)
+        except (ValueError, ConnectionError, RuntimeError) as e:
+            print(f"error de fetch: {e}", file=sys.stderr)
+            return 2
+        path = Path(__file__).resolve().parent.parent / f".cache_{abs(hash(args.url))}.html"
+        path.write_text(raw, encoding="utf-8")
+    else:
+        path = Path(args.doc)
+        if not path.exists():
+            print(f"error: no existe {path}", file=sys.stderr)
+            return 2
 
     typ = detect_input(path)
     if typ == "desconocido":

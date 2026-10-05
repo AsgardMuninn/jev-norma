@@ -19,10 +19,13 @@ __all__ = [
     "build_report",
     "GATE_UMBRAL",
     "CHUNK_SIZE",
+    "fetch_html",
+    "BUILTIN_UA",
 ]
 
 from .normalizer import normalize_clauses_general, segment_plain_text
 from .gate import build_questions, call, load_key, sanitize_clause, split_chunks
+from .fetch import fetch_html, BUILTIN_UA
 from .pipeline import (
     CHUNK_SIZE,
     GATE_UMBRAL,
