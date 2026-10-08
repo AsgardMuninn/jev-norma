@@ -27,8 +27,14 @@ def detect_input(path: Path) -> str:
     return "desconocido"
 
 
-def normalize_document(path: Path) -> dict:
-    """Documento (HTML o PDF) -> {'clauses', 'headers', 'stats'} con normalizador 0-IA."""
+def normalize_document(path: Path, ocr: bool = False) -> dict:
+    """Documento (HTML o PDF) -> {'clauses', 'headers', 'stats'} con normalizador 0-IA.
+
+    `ocr=True` habilita la ruta OCR (WU11) para PDFs escaneados/imagen: si el PDF
+    no tiene capa de texto, se transcribe página a página con un VLM vía
+    OpenRouter (GLM-5.3-Flash) y se devuelve a segmentar por la heurística normal.
+    Sin `ocr`, un PDF escaneado falla de forma clara y sugerente (no engaña).
+    """
     if detect_input(path) == "pdf":
         try:
             from pypdf import PdfReader
@@ -40,7 +46,22 @@ def normalize_document(path: Path) -> dict:
             sys.exit(f"error: no se pudo abrir el PDF ({path}): {e}")
         text = "\n\n".join((pg.extract_text() or "") for pg in reader.pages)
         if not text.strip():
-            sys.exit("error: PDF sin capa de texto (¿escaneado/imagen?). Hace falta OCR.")
+            if not ocr:
+                sys.exit("error: PDF sin capa de texto (¿escaneado/imagen?). "
+                         "Reintenta con `--ocr` o `pip install jev-norma[ocr]`.")
+            from .ocr import ocr_pdf
+            try:
+                o = ocr_pdf(path)
+            except ImportError:
+                sys.exit("error: OCR requiere pymupdf. `pip install jev-norma[ocr]`.")
+            if not o["text"].strip():
+                sys.exit("error: el OCR no devolvió texto para este escaneado.")
+            r = segment_plain_text(o["text"])
+            r.setdefault("headers", [])
+            r["stats"]["ocr"] = True
+            r["stats"]["ocr_n_pages"] = o["stats"]["n_pages"]
+            r["stats"]["ocr_latencia_ms"] = o["stats"]["latencia_ms"]
+            return r
         r = segment_plain_text(text)
         r.setdefault("headers", [])
         return r

@@ -21,11 +21,14 @@ __all__ = [
     "CHUNK_SIZE",
     "fetch_html",
     "BUILTIN_UA",
+    "ocr_pdf",
+    "detect_scanned",
 ]
 
 from .normalizer import normalize_clauses_general, segment_plain_text
 from .gate import build_questions, call, load_key, sanitize_clause, split_chunks
 from .fetch import fetch_html, BUILTIN_UA
+from .ocr import detect_scanned, ocr_pdf
 from .pipeline import (
     CHUNK_SIZE,
     GATE_UMBRAL,

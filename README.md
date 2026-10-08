@@ -29,7 +29,7 @@ documento (HTML/PDF) ──> cláusulas (heurística 0-IA) ──> gate Jev (cho
   (`<main>` > `<article>` > `<body>`, sin chrome nav/header/footer), `<h1..h6>` y líneas
   cortas en mayúsculas como cabeceras de sección, merge de `<p>`+`<li>`, descarte de
   boilerplate (NIT/dirección/www/©/email). Funciona con cualquier CMS (Webflow, WordPress,
-  Drupal…). PDF con capa de texto vía `pypdf`.
+  Drupal…). PDF con capa de texto vía `pypdf`; PDF escaneado vía `--ocr` (WU11).
 - **Gate Jev** (`jev_norma.gate`): cada cláusula se embebe en la instrucción de su pregunta
   (self-contained) — regla de state engineering verificada empíricamente. Chunking para
   respetar el presupuesto de contexto (~32k) y el timeout.
@@ -40,6 +40,7 @@ documento (HTML/PDF) ──> cláusulas (heurística 0-IA) ──> gate Jev (cho
 ```bash
 pip install jev-norma            # CLI + MCP (stdlib puro, 0-deps)
 pip install jev-norma[pdf]       # + soporte PDF (pypdf)
+pip install jev-norma[ocr]       # + OCR PDFs escaneados (pymupdf + visión OpenRouter)
 ```
 
 Requiere `TYPESAFE_API_KEY` en `~/.hermes/.env` o en el entorno (leída del proceso,
@@ -52,8 +53,14 @@ jev-norma --selftest                          # tests unitarios (sin API)
 jev-norma politica.html --no-api              # solo normalización (sin gate)
 jev-norma politica.html [--sample 12]         # normaliza + gate Jev real
 jev-norma politica.pdf --output reporte.json
+jev-norma politica_escaneada.pdf --ocr --sample 6   # PDF escaneado: OCR visión + gate
 jev-norma --url https://…/politica.html       # fetch resiliente a WAF + normaliza + gate
 ```
+
+`--ocr` detecta PDFs sin capa de texto (escaneados/imagen), los transcribe página a
+página con un VLM barato vía OpenRouter (`z-ai/glm-5.3-flash`, visión) y vuelve a
+alimentar el pipeline normal sin más cambios; requiere `OPENROUTER_API_KEY` en
+`~/.hermes/.env` y `pip install jev-norma[ocr]` (WU11).
 
 `--url` descarga el documento con un fetcher resiliente (User-Agent de navegador real,
 rotación de UA ante 403/5xx, reintento de fallos transitorios, declinación clara en 404)
