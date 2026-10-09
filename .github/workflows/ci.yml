@@ -16,8 +16,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install package (dev)
-        run: pip install -e .[dev]
+      - name: Install package (dev + pdf + ocr)
+        run: pip install -e .[dev,pdf,ocr]
       - name: Run pytest
         run: pytest -q
       - name: CLI selftest (sin API)
