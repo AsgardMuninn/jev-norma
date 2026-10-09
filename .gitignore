@@ -9,4 +9,5 @@ dist/
 venv/
 *.json.report
 .env
-*.log
+*.logbench_ocr_parallel.py
+make_scanned_fixture.py

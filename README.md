@@ -54,6 +54,7 @@ jev-norma politica.html --no-api              # solo normalización (sin gate)
 jev-norma politica.html [--sample 12]         # normaliza + gate Jev real
 jev-norma politica.pdf --output reporte.json
 jev-norma politica_escaneada.pdf --ocr --sample 6   # PDF escaneado: OCR visión + gate
+jev-norma escaneada.pdf --ocr --ocr-workers 8   # OCR paralelo (WU12) + gate
 jev-norma --url https://…/politica.html       # fetch resiliente a WAF + normaliza + gate
 ```
 
@@ -61,6 +62,11 @@ jev-norma --url https://…/politica.html       # fetch resiliente a WAF + norma
 página con un VLM barato vía OpenRouter (`z-ai/glm-5.3-flash`, visión) y vuelve a
 alimentar el pipeline normal sin más cambios; requiere `OPENROUTER_API_KEY` en
 `~/.hermes/.env` y `pip install jev-norma[ocr]` (WU11).
+
+`--ocr-workers N` (default 4) transcribe las páginas de un escaneado **en paralelo**
+(la llamada a la visión es I/O-bound: ~6–19 s/página), preservando siempre el orden
+de página en el texto. Medido sobre un escaneado real de 5 páginas: **3.9×** más rápido
+(82.0 s → 21.2 s) con `N=5` (WU12). `--ocr-workers 1` reproduce el comportamiento serial.
 
 `--url` descarga el documento con un fetcher resiliente (User-Agent de navegador real,
 rotación de UA ante 403/5xx, reintento de fallos transitorios, declinación clara en 404)

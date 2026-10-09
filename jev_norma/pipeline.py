@@ -27,12 +27,13 @@ def detect_input(path: Path) -> str:
     return "desconocido"
 
 
-def normalize_document(path: Path, ocr: bool = False) -> dict:
+def normalize_document(path: Path, ocr: bool = False, ocr_workers: int = 4) -> dict:
     """Documento (HTML o PDF) -> {'clauses', 'headers', 'stats'} con normalizador 0-IA.
 
     `ocr=True` habilita la ruta OCR (WU11) para PDFs escaneados/imagen: si el PDF
     no tiene capa de texto, se transcribe página a página con un VLM vía
     OpenRouter (GLM-5.3-Flash) y se devuelve a segmentar por la heurística normal.
+    `ocr_workers` (WU12) solapa páginas del escaneado en paralelo (I/O-bound).
     Sin `ocr`, un PDF escaneado falla de forma clara y sugerente (no engaña).
     """
     if detect_input(path) == "pdf":
@@ -51,7 +52,7 @@ def normalize_document(path: Path, ocr: bool = False) -> dict:
                          "Reintenta con `--ocr` o `pip install jev-norma[ocr]`.")
             from .ocr import ocr_pdf
             try:
-                o = ocr_pdf(path)
+                o = ocr_pdf(path, max_workers=ocr_workers)
             except ImportError:
                 sys.exit("error: OCR requiere pymupdf. `pip install jev-norma[ocr]`.")
             if not o["text"].strip():
@@ -60,6 +61,7 @@ def normalize_document(path: Path, ocr: bool = False) -> dict:
             r.setdefault("headers", [])
             r["stats"]["ocr"] = True
             r["stats"]["ocr_n_pages"] = o["stats"]["n_pages"]
+            r["stats"]["ocr_workers"] = o["stats"].get("workers", 1)
             r["stats"]["ocr_latencia_ms"] = o["stats"]["latencia_ms"]
             return r
         r = segment_plain_text(text)

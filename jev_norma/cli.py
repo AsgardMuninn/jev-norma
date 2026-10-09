@@ -72,6 +72,8 @@ def main(argv=None) -> int:
     ap.add_argument("--output", default=None, help="guardar reporte JSON en esta ruta")
     ap.add_argument("--ocr", action="store_true",
                     help="transcribir PDFs escaneados con visión vía OpenRouter (GLM-5.3-Flash)")
+    ap.add_argument("--ocr-workers", type=int, default=4,
+                    help="páginas de un escaneado transcritas en paralelo (WU12, default 4)")
     args = ap.parse_args(argv)
 
     if args.selftest:
@@ -102,7 +104,7 @@ def main(argv=None) -> int:
         print("error: extensión no soportada (usa .html o .pdf)", file=sys.stderr)
         return 2
 
-    norm = normalize_document(path, ocr=args.ocr)
+    norm = normalize_document(path, ocr=args.ocr, ocr_workers=args.ocr_workers)
     print(json.dumps({"entrada": str(path), "tipo": typ, "stats": norm["stats"],
                       "headers": norm.get("headers", []),
                       "primeras_clausulas": [sanitize_clause(c) for c in norm["clauses"][:6]]},

@@ -139,12 +139,17 @@ def vision_transcribe(image_png: bytes, key: str, model: str = VISION_MODEL) -> 
 
 
 def ocr_pdf(path: Path, page_limit: int | None = None, key: str | None = None,
-            vision_fn=None) -> dict:
+            vision_fn=None, max_workers: int = 4) -> dict:
     """PDF escaneado -> texto transcrito (página a página) + stats.
 
     `vision_fn` inyectable para tests sin red: vi(png_bytes) -> {text, prompt_tokens,
     completion_tokens, latencia_ms}. Por defecto usa la red real (OpenRouter visión).
     `page_limit` acota el número de páginas a transcribir (costo).
+
+    WU12 — `max_workers`: la transcripción página a página es I/O-bound (una llamada
+    HTTP por página, 5.8–19 s c/u), así que se solapan con un ThreadPoolExecutor
+    acotado. El texto resultante SIEMPRE se reensambla en orden de página. Con
+    `max_workers=1` el comportamiento es serial (idéntico a WU11).
     """
     import fitz  # pymupdf (extra [ocr])
 
@@ -157,22 +162,35 @@ def ocr_pdf(path: Path, page_limit: int | None = None, key: str | None = None,
     key = key if key is not None else extract_openrouter_key()
     vision = vision_fn or (lambda png: vision_transcribe(png, key))
 
-    chunks: list[str] = []
-    prompt_tok = completion_tok = 0
-    lat = 0
-    for i in range(n):
-        png = render_page_png(path, i)
-        r = vision(png)
-        chunks.append(r.get("text", "") or "")
-        prompt_tok += int(r.get("prompt_tokens") or 0)
-        completion_tok += int(r.get("completion_tokens") or 0)
-        lat += int(r.get("latencia_ms") or 0)
+    results: list[dict] = [{} for _ in range(n)]
+    if n:
+        workers = max(1, min(int(max_workers), n))
+        if workers == 1:
+            for i in range(n):
+                results[i] = vision(render_page_png(path, i))
+        else:
+            from concurrent.futures import ThreadPoolExecutor
+
+            def _transcribe(i: int) -> dict:
+                # Render dentro del worker: la página se rasteriza y transcribe
+                # en el mismo hilo (fitZ abre su propio handle: thread-safe).
+                return vision(render_page_png(path, i))
+
+            with ThreadPoolExecutor(max_workers=workers) as ex:
+                futs = {ex.submit(_transcribe, i): i for i in range(n)}
+                for fut, i in futs.items():
+                    results[i] = fut.result()
+
+    chunks = [(r.get("text", "") or "") for r in results]
+    prompt_tok = sum(int(r.get("prompt_tokens") or 0) for r in results)
+    completion_tok = sum(int(r.get("completion_tokens") or 0) for r in results)
     return {
         "text": "\n\n".join(chunks).strip(),
         "prompt_tokens": prompt_tok,
         "completion_tokens": completion_tok,
         "stats": {
             "n_pages": n,
+            "workers": max(1, min(int(max_workers), n)) if n else 1,
             "latencia_ms": int((time.monotonic() - t0) * 1000),
             "prompt_tokens": prompt_tok,
             "completion_tokens": completion_tok,
