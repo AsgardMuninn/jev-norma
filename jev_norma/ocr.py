@@ -150,6 +150,13 @@ def ocr_pdf(path: Path, page_limit: int | None = None, key: str | None = None,
     HTTP por página, 5.8–19 s c/u), así que se solapan con un ThreadPoolExecutor
     acotado. El texto resultante SIEMPRE se reensambla en orden de página. Con
     `max_workers=1` el comportamiento es serial (idéntico a WU11).
+
+    WU15 — dedupe de páginas byte-idénticas: un expediente legal escaneado repite
+    carátulas / páginas de firma / en blanco. Como el render es determinista (mismo
+    PNG para la misma página) y la transcripción es temp=0 (bytes idénticos -> texto
+    idéntico), se transcribe UNA vez por página única (dedupe por bytes del PNG) y se
+    re-ensambla cada duplicado con su texto. Ahorra llamadas de visión (costo+latencia)
+    SIN cambiar el output. Las estadísticas de tokens reflejan solo las páginas únicas.
     """
     import fitz  # pymupdf (extra [ocr])
 
@@ -164,22 +171,36 @@ def ocr_pdf(path: Path, page_limit: int | None = None, key: str | None = None,
 
     results: list[dict] = [{} for _ in range(n)]
     if n:
-        workers = max(1, min(int(max_workers), n))
+        # WU15 — render de cada página para armar el mapa bytes->primera-página.
+        rendered = [render_page_png(path, i) for i in range(n)]
+        uniq: dict[bytes, int] = {}   # bytes del PNG -> primera página que los tiene
+        for i, b in enumerate(rendered):
+            uniq.setdefault(b, i)
+        unique_pages = sorted(uniq.values())  # en orden de página para reensamblar
+
+        def _transcribe(page_no: int) -> tuple[int, dict]:
+            return page_no, vision(rendered[page_no])
+
+        workers = max(1, min(int(max_workers), len(unique_pages)))
         if workers == 1:
-            for i in range(n):
-                results[i] = vision(render_page_png(path, i))
+            for page_no in unique_pages:
+                page_no, out = _transcribe(page_no)
+                results[page_no] = out
         else:
             from concurrent.futures import ThreadPoolExecutor
 
-            def _transcribe(i: int) -> dict:
-                # Render dentro del worker: la página se rasteriza y transcribe
-                # en el mismo hilo (fitZ abre su propio handle: thread-safe).
-                return vision(render_page_png(path, i))
-
             with ThreadPoolExecutor(max_workers=workers) as ex:
-                futs = {ex.submit(_transcribe, i): i for i in range(n)}
-                for fut, i in futs.items():
-                    results[i] = fut.result()
+                futs = {ex.submit(_transcribe, pg): pg for pg in unique_pages}
+                for fut, pg in futs.items():
+                    results[pg] = fut.result()[1]
+
+        # WU15 — propagar el texto transcrito a las páginas duplicadas. Solo se
+        # copia el TEXTO (no los tokens): los duplicados no pagaron visión, así
+        # que los contadores deben reflejar únicamente las páginas únicas (costo real).
+        for i, b in enumerate(rendered):
+            if results[i] == {}:  # duplicado: copia el texto de su representante
+                src = results[uniq[b]]
+                results[i] = {**src, "prompt_tokens": 0, "completion_tokens": 0}
 
     chunks = [(r.get("text", "") or "") for r in results]
     prompt_tok = sum(int(r.get("prompt_tokens") or 0) for r in results)

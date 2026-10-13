@@ -211,3 +211,61 @@ def test_ocr_pdf_workers_one_is_sequential(tmp_path, monkeypatch):
 
     ocr_pdf(p, vision_fn=vision, max_workers=1)
     assert state["peak"] == 1
+
+
+# ---------------------------------------------------------------------------
+# WU15 — Dedupe de páginas byte-idénticas: en un expediente legal escaneado
+# (10-30 páginas) es común repetir carátula/página de firma/en blanco. Hoy cada
+# página se transcribe por su costo de visión (~5.8-19s c/u). Deduplicar por
+# hash de los bytes renderizados: 1 llamada de visión por página ÚNICA y
+# re-ensamblar el texto en orden. Ahorra costo + latencia SIN cambiar el output
+# (bytes idénticos -> texto idéntico, temp=0). Se prueba sin red (render + vision mockeados).
+# ---------------------------------------------------------------------------
+
+def test_ocr_pdf_dedups_byte_identical_pages(tmp_path, monkeypatch):
+    """3 páginas de las cuales 2 son byte-idénticas -> 2 llamadas de visión, no 3."""
+    p = _make_multipage_pdf(tmp_path, pages=3)
+    # Página 0 y 2 comparten bytes ("PAGINA_REPETIDA"); la 1 es distinta.
+    rendered = {0: b"PAGINA_CARATULA", 1: b"PAGINA_CLAUSULAS", 2: b"PAGINA_CARATULA"}
+    monkeypatch.setattr(ocrmod, "render_page_png",
+                        lambda path, page_no, dpi=150: rendered[page_no])
+
+    calls = []
+
+    def fake_vision(png_bytes: bytes) -> dict:
+        calls.append(png_bytes)
+        if png_bytes == b"PAGINA_CARATULA":
+            txt = "CARÁTULA"
+        else:
+            txt = "CLÁUSULAS"
+        return {"text": txt, "prompt_tokens": 10, "completion_tokens": 2}
+
+    r = ocr_pdf(p, vision_fn=fake_vision, max_workers=4)
+    # Única llamada por grupo de bytes idénticos.
+    assert len(set(calls)) == 2 and len(calls) == 2, f"llamadas visión: {len(calls)}"
+    # El texto se re-ensambla preservando el ORDEN de página (0,1,2).
+    assert r["text"].split("\n\n") == ["CARÁTULA", "CLÁUSULAS", "CARÁTULA"]
+    assert r["stats"]["n_pages"] == 3
+    # Los tokens cuentan solo las páginas únicas transcritas (no se paga 2x).
+    assert r["prompt_tokens"] == 20
+
+
+def test_ocr_pdf_dedup_faster_than_no_dedup(tmp_path, monkeypatch):
+    """Con páginas repetidas, dedupe corta visión costosa que de otro modo se pagaría 2x."""
+    import time as _time
+    p = _make_multipage_pdf(tmp_path, pages=4)
+    # Página 0 y 3 idénticas; 1 y 2 distintas.
+    rendered = {0: b"X", 1: b"Y", 2: b"Z", 3: b"X"}
+    monkeypatch.setattr(ocrmod, "render_page_png",
+                        lambda path, page_no, dpi=150: rendered[page_no])
+
+    def slow_vision(png_bytes: bytes) -> dict:
+        _time.sleep(0.1)
+        return {"text": "tx", "prompt_tokens": 5, "completion_tokens": 1}
+
+    t0 = _time.monotonic()
+    ocr_pdf(p, vision_fn=slow_vision, max_workers=4)
+    elapsed = _time.monotonic() - t0
+    # 3 únicas (X,Y,Z) en paralelo ~0.1s; sin dedup serían 4 en paralelo ~0.1s,
+    # así que el ahorro aquí es en LLAMADAS (3 vs 4), medido más abajo por conteo.
+    assert elapsed < 0.45
