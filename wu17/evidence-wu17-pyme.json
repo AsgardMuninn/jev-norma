@@ -1,0 +1,106 @@
+{
+  "gate": "choice [obligacion|riesgo|sin_accion] + confidence",
+  "umbral_gate_humano": 0.8,
+  "clausulas_al_gate": 12,
+  "por_bucket": {
+    "sin_accion": 7,
+    "obligacion": 4,
+    "riesgo": 1
+  },
+  "in_tokens": 5751,
+  "latencia_ms": 263,
+  "costo_usd_estimado": 0.000242,
+  "tabla": [
+    {
+      "clausula": "d00",
+      "texto": "Página 1 de 11",
+      "decidido": "sin_accion",
+      "confianza": 1.0,
+      "gate_humano": false
+    },
+    {
+      "clausula": "d04",
+      "texto": "2.2. ALCANCE: Todos los funcionarios, colaboradores, contratistas y aliados come…",
+      "decidido": "sin_accion",
+      "confianza": 0.73,
+      "gate_humano": true
+    },
+    {
+      "clausula": "d08",
+      "texto": "El tratamiento de datos sensibles está sujeto a un régimen de excepción y solo s…",
+      "decidido": "obligacion",
+      "confianza": 0.94,
+      "gate_humano": false
+    },
+    {
+      "clausula": "d12",
+      "texto": "Es un compromiso de LOGISTRAL S.A.S. entender y aplicar de manera armónica los p…",
+      "decidido": "sin_accion",
+      "confianza": 0.94,
+      "gate_humano": false
+    },
+    {
+      "clausula": "d16",
+      "texto": "a. Conocer, actualizar y rectificar sus datos personales, frente a datos parcial…",
+      "decidido": "obligacion",
+      "confianza": 1.0,
+      "gate_humano": false
+    },
+    {
+      "clausula": "d20",
+      "texto": "LOGISTRAL S.A.S. conservará las autorizaciones otorgadas por los titulares, ya s…",
+      "decidido": "obligacion",
+      "confianza": 1.0,
+      "gate_humano": false
+    },
+    {
+      "clausula": "d24",
+      "texto": "Página 6 de 11",
+      "decidido": "sin_accion",
+      "confianza": 1.0,
+      "gate_humano": false
+    },
+    {
+      "clausula": "d28",
+      "texto": "Contar con información actualizada y suficiente de proveedores y contratistas pa…",
+      "decidido": "sin_accion",
+      "confianza": 0.67,
+      "gate_humano": true
+    },
+    {
+      "clausula": "d32",
+      "texto": "Utilizar los registros de marcaje, acceso y/o geolocalización como soporte o evi…",
+      "decidido": "riesgo",
+      "confianza": 0.79,
+      "gate_humano": true
+    },
+    {
+      "clausula": "d36",
+      "texto": "7.5.",
+      "decidido": "sin_accion",
+      "confianza": 0.97,
+      "gate_humano": false
+    },
+    {
+      "clausula": "d40",
+      "texto": "Recolectar y mantener actualizados los registros de datos personales de accionis…",
+      "decidido": "obligacion",
+      "confianza": 0.45,
+      "gate_humano": true
+    },
+    {
+      "clausula": "d44",
+      "texto": "9. ENLACES A SITIOS DE TERCEROS El sitio web de LOGISTRAL S.A.S. puede contener …",
+      "decidido": "sin_accion",
+      "confianza": 0.92,
+      "gate_humano": false
+    }
+  ],
+  "clausulas_a_revision": [
+    "d04",
+    "d28",
+    "d32",
+    "d40"
+  ],
+  "NOTA": "cláusulas normalizadas por heurística 0-IA (no curadas a mano)"
+}
