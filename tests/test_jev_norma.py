@@ -84,6 +84,21 @@ def test_segment_plain_text_pdf():
     assert r["stats"]["n_clauses_final"] == 2
 
 
+def test_segment_plain_text_drops_pagination_headers():
+    # WU18: headers numéricos "Página X de Y" que se cuelan como cláusulas (vueltos en WU17 Logistral d00/d24)
+    tx = ("La sociedad tratará los datos conforme a la Ley 1581 y el Decreto 1377.\n\n"
+          "Página 3 de 11\n\n"
+          "Se solicitará la autorización previa, expresa e informada del titular. "
+          "Página 4 de 11\n"
+          "Se conservará la prueba de dichas autorizaciones.")
+    r = segment_plain_text(tx)
+    joined = "\n".join(r["clauses"]).lower()
+    assert "página" not in joined
+    assert "tratará los datos conforme" in joined
+    assert "autorización previa" in joined and "conservará la prueba" in joined
+    assert r["stats"]["n_clauses_final"] == 2
+
+
 def test_build_questions_self_contained():
     qs = build_questions({"a": "El responsable conservará la prueba de la autorización."})
     instr = qs["a"]["instructions"]

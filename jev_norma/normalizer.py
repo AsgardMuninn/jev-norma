@@ -50,6 +50,11 @@ CONTACT_ANYWHERE = re.compile(
 
 _SENT_SPLIT = re.compile(r"(?<=[.;])\s+(?=[A-ZÁÉÍÓÚÑ0-9¿¡\"'«])")
 
+# WU18: cabeceras de página numéricas de extracciones PDF ("Página 3 de 11",
+# "Página 4 de 11") se cuelan como cláusulas (vistas en WU17, Logistral d00/d24).
+# Sin anclas: se eliminan también cuando el extractor las incrusta a mitad de párrafo.
+PAGE_HEADER_PAT = re.compile(r"\bp[aá]gina\s+\d+\s*(?:de|sl\.?|/)\s*\d*\b", re.IGNORECASE)
+
 
 def _strip_html(txt: str) -> str:
     txt = re.sub(r"<[^>]+>", " ", txt)
@@ -166,6 +171,9 @@ def segment_plain_text(text: str, max_chars: int = MAX_CLAUSE_CHARS) -> dict:
     raw_chunks = re.split(r"\n\s*\n", text)
     clauses: list[str] = []
     for ch in raw_chunks:
+        # WU18: quitar cabeceras de página numéricas ("Página 3 de 11"), tanto como
+        # línea propia como incrustadas a mitad de párrafo por el extractor PDF.
+        ch = PAGE_HEADER_PAT.sub(" ", ch)
         joined = re.sub(r"\s+", " ", ch).strip()
         if not joined:
             continue
