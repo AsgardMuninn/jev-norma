@@ -3,7 +3,7 @@
 import json
 from pathlib import Path
 
-from jev_norma.gate import build_questions, load_key, sanitize_clause, split_chunks
+from jev_norma.gate import build_questions, call, load_key, sanitize_clause, split_chunks
 from jev_norma.mcp import TOOL_SCHEMA, handle_message
 from jev_norma.normalizer import (
     MAX_CLAUSE_CHARS,
@@ -108,6 +108,43 @@ def test_build_questions_self_contained():
     assert set(qs["a"]["criteria"]) == {"obligacion", "riesgo", "sin_accion"}
 
 
+def test_build_questions_adds_severity_score_without_replacing_choice():
+    qs = build_questions({"a": "El responsable conservará la prueba de la autorización."})
+    assert set(qs) == {"a", "severity__a"}
+    assert qs["a"]["type"] == "choice"
+    severity = qs["severity__a"]
+    assert severity["type"] == "score"
+    assert len(severity["criteria"]) == 3
+    assert "El responsable conservará la prueba" in severity["instructions"]
+
+
+def test_call_merges_choice_and_score_answers(monkeypatch):
+    response_data = {
+        "usage": {"input_tokens": 12, "output_tokens": 0},
+        "answers": {
+            "a": {"choice": "obligacion", "confidence": 0.95, "probabilities": {"obligacion": 0.95}},
+            "severity__a": {"score": 1.98, "confidence": 0.97,
+                            "probabilities": {"0": 0.0, "1": 0.02, "2": 0.98}},
+        },
+    }
+
+    class Response:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return False
+
+        def read(self):
+            return json.dumps(response_data).encode()
+
+    monkeypatch.setattr("urllib.request.urlopen", lambda *args, **kwargs: Response())
+    result = call("test-key", build_questions({"a": "cláusula real"}))
+    assert result["answers"]["a"]["bucket"] == "obligacion"
+    assert result["answers"]["a"]["severidad"] == 1.98
+    assert result["answers"]["a"]["severidad_confianza"] == 0.97
+
+
 def test_split_chunks():
     chunks = list(split_chunks({"a": 1, "b": 2, "c": 3, "d": 4, "e": 5}, 2))
     assert [len(c) for c in chunks] == [2, 2, 1]
@@ -129,6 +166,25 @@ def test_build_report_fail_open():
     assert rep["clausulas_a_revision"] == ["b"]
     assert rep["umbral_gate_humano"] == GATE_UMBRAL
     assert rep["costo_usd_estimado"] == round(1000 * 42e-9, 6)
+
+
+def test_build_report_includes_severity_and_routes_low_score_confidence():
+    rep = build_report(
+        {"a": "cláusula exigible", "b": "cláusula ambigua"},
+        {"a": {"bucket": "obligacion", "confianza": 0.95,
+               "severidad": 1.98, "severidad_confianza": 0.97,
+               "severidad_prob": {"0": 0.0, "1": 0.02, "2": 0.98}},
+         "b": {"bucket": "riesgo", "confianza": 0.95,
+               "severidad": 1.1, "severidad_confianza": 0.42,
+               "severidad_prob": {"0": 0.3, "1": 0.4, "2": 0.3}}},
+        1000, 25)
+    assert rep["por_severidad"] == {
+        "sin_obligacion": 0, "informativa_menor": 1, "exigible_sancionable": 1,
+    }
+    assert rep["tabla"][0]["severidad"] == 1.98
+    assert rep["tabla"][0]["severidad_confianza"] == 0.97
+    assert rep["tabla"][0]["nivel_severidad"] == "exigible_sancionable"
+    assert rep["clausulas_a_revision"] == ["b"]
 
 
 def test_sample_indices():

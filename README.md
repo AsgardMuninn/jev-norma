@@ -3,7 +3,8 @@
 Triaje normativo LatAm con **Jev (System One)** como gate. Toma una política de
 tratamiento de datos / términos en español (Ley 1581 de 2012, Colombia), normaliza las
 cláusulas con heurística **0-IA** (sin palabras, determinista), y clasifica cada cláusula
-con Jev en `choice [obligacion | riesgo | sin_accion]` + `confidence` calibrada, con una
+con Jev en `choice [obligacion | riesgo | sin_accion]` + `score` de severidad 0–2,
+ambos con `confidence`, con una
 **cola de revisión humana fail-open** (confianza < 0.8 → humano; nunca matar por Jev solo).
 
 El núcleo es una **decisión tipada de Jev** (System 1), no generar texto. Jev corre
@@ -20,7 +21,7 @@ enruta a humano lo genuinamente ambiguo.
 ## Pipeline
 
 ```
-documento (HTML/PDF) ──> cláusulas (heurística 0-IA) ──> gate Jev (choice+confidence)
+documento (HTML/PDF) ──> cláusulas (heurística 0-IA) ──> gate Jev (choice+score+confidence)
                                                               │
                                               confianza < 0.8 ─┴─> cola de revisión humana
 ```
@@ -30,10 +31,12 @@ documento (HTML/PDF) ──> cláusulas (heurística 0-IA) ──> gate Jev (cho
   cortas en mayúsculas como cabeceras de sección, merge de `<p>`+`<li>`, descarte de
   boilerplate (NIT/dirección/www/©/email). Funciona con cualquier CMS (Webflow, WordPress,
   Drupal…). PDF con capa de texto vía `pypdf`; PDF escaneado vía `--ocr` (WU11).
-- **Gate Jev** (`jev_norma.gate`): cada cláusula se embebe en la instrucción de su pregunta
+- **Gate Jev** (`jev_norma.gate`): cada cláusula se embebe en sus preguntas
   (self-contained) — regla de state engineering verificada empíricamente. Chunking para
-  respetar el presupuesto de contexto (~32k) y el timeout.
-- **Reporte fail-open** (`jev_norma.pipeline`): `choice` + `confidence` + `gate_humano`.
+  respetar el presupuesto de contexto (~32k) y el timeout. En una request mixta por cláusula,
+  `choice` clasifica el tipo y `score` ubica la severidad en una escala ordenada de 0 a 2.
+- **Reporte fail-open** (`jev_norma.pipeline`): bucket, severidad y sus confianzas;
+  confianza < 0.8 en cualquiera de las dos decisiones envía la cláusula a revisión humana.
 
 ## Instalación
 

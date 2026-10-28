@@ -90,19 +90,43 @@ def gate(sample: dict) -> dict:
 def build_report(sample: dict, answers: dict, in_tokens: int, lat_ms: int) -> dict:
     """Reporte de decisión tipada con cola de revisión humana (fail-open)."""
     por_bucket: dict = {}
+    severity_names = ("sin_obligacion", "informativa_menor", "exigible_sancionable")
+    por_severidad = {name: 0 for name in severity_names}
     tabla = []
     for cid, txt in sample.items():
         a = answers.get(cid, {})
         dec = a.get("bucket") or "NO_BUCKET"
         por_bucket[dec] = por_bucket.get(dec, 0) + 1
         conf = a.get("confianza", 0)
-        tabla.append({"clausula": cid, "texto": sanitize_clause(txt), "decidido": dec,
-                      "confianza": conf, "gate_humano": conf < GATE_UMBRAL})
+        row = {"clausula": cid, "texto": sanitize_clause(txt), "decidido": dec,
+               "confianza": conf}
+        severity = a.get("severidad")
+        score_conf = a.get("severidad_confianza", 0)
+        needs_review = conf < GATE_UMBRAL
+        if severity is not None:
+            probabilities = a.get("severidad_prob") or {}
+            try:
+                level = max(probabilities, key=lambda k: float(probabilities[k]))
+                level_index = int(level)
+            except (ValueError, TypeError):
+                level_index = int(float(severity) + 0.5)
+            level_index = min(max(level_index, 0), len(severity_names) - 1)
+            severity_name = severity_names[level_index]
+            por_severidad[severity_name] += 1
+            row.update({
+                "severidad": severity,
+                "severidad_confianza": score_conf,
+                "nivel_severidad": severity_name,
+            })
+            needs_review = needs_review or score_conf < GATE_UMBRAL
+        row["gate_humano"] = needs_review
+        tabla.append(row)
     return {
-        "gate": "choice [obligacion|riesgo|sin_accion] + confidence",
+        "gate": "choice [obligacion|riesgo|sin_accion] + score [severidad 0..2] + confidence",
         "umbral_gate_humano": GATE_UMBRAL,
         "clausulas_al_gate": len(sample),
         "por_bucket": por_bucket,
+        "por_severidad": por_severidad,
         "in_tokens": in_tokens,
         "latencia_ms": lat_ms,
         "costo_usd_estimado": round(in_tokens * 42e-9, 6),

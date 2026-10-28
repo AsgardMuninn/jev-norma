@@ -1,7 +1,7 @@
 """jev_norma.gate — cliente del gate System One (Jev) + construcción de preguntas.
 
-El núcleo del producto es una DECISIÓN TIPADA de Jev (choice + confidence calibrada),
-no generar texto. Cada cláusula se embebe en la INSTRUCCIÓN de su pregunta
+El núcleo del producto son DECISIONES TIPADAS de Jev (choice + score + confidence calibrada),
+no generar texto. Cada cláusula se embebe en la INSTRUCCIÓN de sus preguntas
 (self-contained) — regla de state engineering verificada empíricamente (WU1-WU4):
 compartir el inventario solo en `state` degrada a todo-`keep` con confianza alta
 ("confidently wrong"); embebido en la instrucción da precisión alta.
@@ -21,18 +21,24 @@ TIMEOUT_S = 20
 
 # Buckets normativos (Ley 1581/2012 Colombia, protección de datos).
 BUCKETS = ("obligacion", "riesgo", "sin_accion")
+SEVERITY_LEVELS = (
+    "sin obligación normativa concreta",
+    "informativa o de impacto menor, sin consecuencia sancionatoria directa",
+    "exigible o sancionable, con impacto material para el responsable o el titular",
+)
 
 
 def build_questions(clauses: dict) -> dict:
-    """clauses: {cid: texto_cláusula} -> preguntas choice self-contained para Jev."""
+    """clauses: {cid: texto_cláusula} -> preguntas choice + score self-contained."""
     qs = {}
     for cid in clauses:
+        clause = clauses[cid]
         qs[cid] = {
             "type": "choice",
             "instructions": (
                 "Triaje normativo (Ley 1581/2012 Colombia, protección de datos). Evalúa esta "
                 f"cláusula de una política de tratamiento de datos personales. Cláusula [{cid}]: "
-                f"\"{clauses[cid]}\". Clasifica en: obligacion (impone una obligación legal concreta "
+                f"\"{clause}\". Clasifica en: obligacion (impone una obligación legal concreta "
                 "que el responsable debe cumplir u ofrecer al titular: obtener autorización previa "
                 "expresa e informada, conservar prueba de la autorización, informar finalidades, "
                 "deberes de información/notificación, ejercicio de derechos ARCO), riesgo "
@@ -48,6 +54,16 @@ def build_questions(clauses: dict) -> dict:
                 "riesgo": "riesgo de incumplimiento, cláusula abusiva o recolección invasiva sin garantía suficiente",
                 "sin_accion": "inocua, boilerplate, de alcance/vigencia/normativa, no exige acción normativa",
             },
+        }
+        qs[f"severity__{cid}"] = {
+            "type": "score",
+            "instructions": (
+                "Evalúa la severidad normativa de esta cláusula de una política de tratamiento "
+                f"de datos personales bajo Ley 1581/2012 de Colombia. Cláusula [{cid}]: \"{clause}\". "
+                "Valora la gravedad/consecuencia de la obligación o riesgo descrito, no la calidad "
+                "de redacción ni el nivel de confianza de la clasificación."
+            ),
+            "criteria": list(SEVERITY_LEVELS),
         }
     return qs
 
@@ -78,7 +94,7 @@ def call(key: str, questions: dict) -> dict:
     body = json.dumps({
         "model": MODEL,
         "state": {"input": "Política de tratamiento de datos personales en español (Ley 1581 de 2012).",
-                  "output": "Bucket normativo por cláusula (obligacion/riesgo/sin_accion)."},
+                  "output": "Bucket normativo y severidad ordinal por cláusula."},
         "questions": questions,
     }).encode()
     req = urllib.request.Request(ENDPOINT, data=body, headers={
@@ -90,8 +106,19 @@ def call(key: str, questions: dict) -> dict:
     usage = resp.get("usage", {})
     out = {}
     for eid, a in resp.get("answers", {}).items():
-        out[eid] = {"bucket": a.get("choice"), "confianza": round(a.get("confidence", 0), 3),
-                    "prob": a.get("probabilities")}
+        if eid.startswith("severity__"):
+            cid = eid.removeprefix("severity__")
+            out.setdefault(cid, {}).update({
+                "severidad": a.get("score"),
+                "severidad_confianza": round(a.get("confidence", 0), 3),
+                "severidad_prob": a.get("probabilities"),
+            })
+        else:
+            out.setdefault(eid, {}).update({
+                "bucket": a.get("choice"),
+                "confianza": round(a.get("confidence", 0), 3),
+                "prob": a.get("probabilities"),
+            })
     return {"latencia_ms": ms, "in_tokens": usage.get("input_tokens", 0),
             "out_tokens": usage.get("output_tokens", 0), "answers": out}
 
