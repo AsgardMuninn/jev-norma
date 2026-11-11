@@ -19,6 +19,12 @@ ENDPOINT = "https://api.typesafe.ai/v1/systemone"
 MODEL = "jev-latest"
 TIMEOUT_S = 20
 
+
+def model_name() -> str:
+    """Modelo a usar. `JEV_MODEL` permite PINEAR la versión: el alias `jev-latest`
+    se movió a 1.14 (14-oct-2026) y cualquier umbral calibrado debe fijar versión."""
+    return os.environ.get("JEV_MODEL") or MODEL
+
 # Buckets normativos (Ley 1581/2012 Colombia, protección de datos).
 BUCKETS = ("obligacion", "riesgo", "sin_accion")
 SEVERITY_LEVELS = (
@@ -89,10 +95,14 @@ def load_key() -> str:
     return os.environ.get("TYPESAFE_API_KEY", "")
 
 
-def call(key: str, questions: dict) -> dict:
-    """Una request a Jev (System One). Devuelve {latencia_ms, in_tokens, out_tokens, answers}."""
+def call(key: str, questions: dict, model: str | None = None) -> dict:
+    """Una request a Jev (System One).
+
+    Devuelve también `model` (el que responde, según la API) para que el reporte
+    quede atado a una versión concreta y no a un alias móvil.
+    """
     body = json.dumps({
-        "model": MODEL,
+        "model": model or model_name(),
         "state": {"input": "Política de tratamiento de datos personales en español (Ley 1581 de 2012).",
                   "output": "Bucket normativo y severidad ordinal por cláusula."},
         "questions": questions,
@@ -120,7 +130,8 @@ def call(key: str, questions: dict) -> dict:
                 "prob": a.get("probabilities"),
             })
     return {"latencia_ms": ms, "in_tokens": usage.get("input_tokens", 0),
-            "out_tokens": usage.get("output_tokens", 0), "answers": out}
+            "out_tokens": usage.get("output_tokens", 0),
+            "model": resp.get("model") or (model or model_name()), "answers": out}
 
 
 def sanitize_clause(c: str, n: int = 80) -> str:

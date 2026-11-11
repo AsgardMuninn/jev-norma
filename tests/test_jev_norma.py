@@ -240,3 +240,56 @@ def test_mcp_errors():
 def test_load_key_no_crash():
     # No debe lanzar aunque no exista la key; devuelve str (vacío si no hay).
     assert isinstance(load_key(), str)
+
+def test_call_reports_model_and_env_can_pin_it(monkeypatch):
+    """Jev 1.14 movió `jev-latest`; todo umbral exige saber/pinnear el modelo (regla 1.14)."""
+    import importlib
+    gate_mod = importlib.import_module("jev_norma.gate")
+
+    captured = {}
+
+    class Response:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return False
+
+        def read(self):
+            return json.dumps({"model": "jev-1.14.0", "usage": {"input_tokens": 10, "output_tokens": 5},
+                               "answers": {"a": {"type": "choice", "choice": "obligacion",
+                                                 "confidence": 0.9, "probabilities": {}}}}).encode()
+
+    def fake_urlopen(req, timeout=None):
+        captured["body"] = json.loads(req.data.decode())
+        return Response()
+
+    monkeypatch.setattr("urllib.request.urlopen", fake_urlopen)
+    monkeypatch.setenv("JEV_MODEL", "jev-1.13.0")
+    assert gate_mod.model_name() == "jev-1.13.0"
+
+    r = gate_mod.call("test-key", build_questions({"a": "cláusula"}))
+    assert captured["body"]["model"] == "jev-1.13.0"
+    assert r["model"] == "jev-1.14.0"
+
+    monkeypatch.delenv("JEV_MODEL")
+    assert gate_mod.model_name() == "jev-latest"
+
+
+def test_gate_and_report_record_model(monkeypatch):
+    from jev_norma import pipeline
+
+    monkeypatch.setattr(pipeline, "call", lambda key, chunk, model=None: {
+        "latencia_ms": 1, "in_tokens": 10, "out_tokens": 0, "model": "jev-1.14.0",
+        "answers": {cid: {"bucket": "obligacion", "confianza": 0.9, "severidad": 2.0,
+                          "severidad_confianza": 0.9, "severidad_prob": {"2": 0.9}}
+                    for cid in chunk if not cid.startswith("severity__")}})
+    monkeypatch.setattr(pipeline, "load_key", lambda: "k")
+
+    sample = {"a": "cláusula"}
+    r = pipeline.gate(sample)
+    assert r["modelo"] == ["jev-1.14.0"]
+
+    rep = pipeline.build_report(sample, r["answers"], r["in_tokens"], r["latencia_ms"],
+                                modelo=r["modelo"])
+    assert rep["modelo"] == ["jev-1.14.0"]

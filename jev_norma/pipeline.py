@@ -71,23 +71,27 @@ def normalize_document(path: Path, ocr: bool = False, ocr_workers: int = 4) -> d
     return normalize_clauses_general(raw)
 
 
-def gate(sample: dict) -> dict:
+def gate(sample: dict, model: str | None = None) -> dict:
     """Decisión tipada real contra la API de Jev (chunked). Requiere TYPESAFE_API_KEY."""
     key = load_key()
     if not key:
         sys.exit("error: TYPESAFE_API_KEY no encontrada en ~/.hermes/.env")
     qs = build_questions(sample)
-    r = {"latencia_ms": 0, "in_tokens": 0, "out_tokens": 0, "answers": {}}
+    r = {"latencia_ms": 0, "in_tokens": 0, "out_tokens": 0, "answers": {}, "modelo": []}
     for chunk in split_chunks(qs, CHUNK_SIZE):
-        rk = call(key, chunk)
+        rk = call(key, chunk, model=model)
         r["latencia_ms"] += rk["latencia_ms"]
         r["in_tokens"] += rk["in_tokens"]
         r["out_tokens"] += rk["out_tokens"]
+        m = rk.get("model")
+        if m and m not in r["modelo"]:
+            r["modelo"].append(m)
         r["answers"].update(rk["answers"])
     return r
 
 
-def build_report(sample: dict, answers: dict, in_tokens: int, lat_ms: int) -> dict:
+def build_report(sample: dict, answers: dict, in_tokens: int, lat_ms: int,
+                 modelo: list | None = None) -> dict:
     """Reporte de decisión tipada con cola de revisión humana (fail-open)."""
     por_bucket: dict = {}
     severity_names = ("sin_obligacion", "informativa_menor", "exigible_sancionable")
@@ -123,6 +127,7 @@ def build_report(sample: dict, answers: dict, in_tokens: int, lat_ms: int) -> di
         tabla.append(row)
     return {
         "gate": "choice [obligacion|riesgo|sin_accion] + score [severidad 0..2] + confidence",
+        "modelo": modelo or [],
         "umbral_gate_humano": GATE_UMBRAL,
         "clausulas_al_gate": len(sample),
         "por_bucket": por_bucket,

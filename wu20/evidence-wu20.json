@@ -1,0 +1,725 @@
+{
+  "fecha": "2026-11-11T11:08:16-05:00",
+  "gold": {
+    "ruta": "wu20/gold.jsonl",
+    "n": 26,
+    "fuente": [
+      "nequi-politica-tratamiento-datos"
+    ],
+    "nota": "etiquetado por un solo anotador con rúbrica documentada; no es ground truth legal"
+  },
+  "modelo": [
+    "jev-1.14.0"
+  ],
+  "ejecucion": {
+    "chunk_size": 6,
+    "in_tokens": 21270,
+    "out_tokens": 1671,
+    "latencia_ms": 963,
+    "costo_usd_estimado": 0.000893
+  },
+  "evaluacion": {
+    "n": 26,
+    "accuracy_bucket": 0.8461538461538461,
+    "matriz_confusion": {
+      "obligacion": {
+        "obligacion": 13,
+        "riesgo": 0,
+        "sin_accion": 3
+      },
+      "riesgo": {
+        "obligacion": 1,
+        "riesgo": 3,
+        "sin_accion": 0
+      },
+      "sin_accion": {
+        "obligacion": 0,
+        "riesgo": 0,
+        "sin_accion": 6
+      }
+    },
+    "por_clase": {
+      "obligacion": {
+        "tp": 13,
+        "fp": 1,
+        "fn": 3,
+        "precision": 0.9285714285714286,
+        "recall": 0.8125,
+        "f1": 0.8666666666666666,
+        "support": 16
+      },
+      "riesgo": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 1,
+        "precision": 1.0,
+        "recall": 0.75,
+        "f1": 0.8571428571428571,
+        "support": 4
+      },
+      "sin_accion": {
+        "tp": 6,
+        "fp": 3,
+        "fn": 0,
+        "precision": 0.6666666666666666,
+        "recall": 1.0,
+        "f1": 0.8,
+        "support": 6
+      }
+    },
+    "severidad_accuracy_exacta": 0.6153846153846154,
+    "severidad_mae": 0.4230769230769231,
+    "severidad_dentro_de_1": 0.9615384615384616,
+    "ece_bucket": 0.023076923076922905,
+    "ece_severidad": 0.19769230769230767,
+    "fiabilidad_bucket": [
+      {
+        "lo": 0.0,
+        "hi": 0.2,
+        "n": 0,
+        "avg_confidence": null,
+        "accuracy": null
+      },
+      {
+        "lo": 0.2,
+        "hi": 0.4,
+        "n": 0,
+        "avg_confidence": null,
+        "accuracy": null
+      },
+      {
+        "lo": 0.4,
+        "hi": 0.6,
+        "n": 2,
+        "avg_confidence": 0.485,
+        "accuracy": 0.5
+      },
+      {
+        "lo": 0.6,
+        "hi": 0.8,
+        "n": 5,
+        "avg_confidence": 0.696,
+        "accuracy": 0.6
+      },
+      {
+        "lo": 0.8,
+        "hi": 1.0,
+        "n": 19,
+        "avg_confidence": 0.9426315789473686,
+        "accuracy": 0.9473684210526315
+      }
+    ],
+    "fiabilidad_severidad": [
+      {
+        "lo": 0.0,
+        "hi": 0.2,
+        "n": 1,
+        "avg_confidence": 0.1,
+        "accuracy": 0.0
+      },
+      {
+        "lo": 0.2,
+        "hi": 0.4,
+        "n": 5,
+        "avg_confidence": 0.30200000000000005,
+        "accuracy": 0.6
+      },
+      {
+        "lo": 0.4,
+        "hi": 0.6,
+        "n": 3,
+        "avg_confidence": 0.5066666666666667,
+        "accuracy": 0.3333333333333333
+      },
+      {
+        "lo": 0.6,
+        "hi": 0.8,
+        "n": 9,
+        "avg_confidence": 0.6911111111111111,
+        "accuracy": 0.4444444444444444
+      },
+      {
+        "lo": 0.8,
+        "hi": 1.0,
+        "n": 8,
+        "avg_confidence": 0.89875,
+        "accuracy": 1.0
+      }
+    ],
+    "gate": {
+      "n": 26,
+      "umbral": 0.8,
+      "revisadas": 19,
+      "fraccion_revision": 0.7307692307692307,
+      "auto": 7,
+      "accuracy_auto": 1.0,
+      "errors_auto": 0
+    }
+  },
+  "filas": [
+    {
+      "id": "n000",
+      "gold_bucket": "sin_accion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 0,
+      "pred_severity": 1,
+      "confidence": 1.0,
+      "severity_confidence": 0.53,
+      "gate_humano": true
+    },
+    {
+      "id": "n002",
+      "gold_bucket": "sin_accion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 0,
+      "pred_severity": 2,
+      "confidence": 0.8,
+      "severity_confidence": 0.1,
+      "gate_humano": true
+    },
+    {
+      "id": "n003",
+      "gold_bucket": "sin_accion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 0,
+      "pred_severity": 1,
+      "confidence": 1.0,
+      "severity_confidence": 0.6,
+      "gate_humano": true
+    },
+    {
+      "id": "n008",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 1,
+      "pred_severity": 2,
+      "confidence": 0.62,
+      "severity_confidence": 0.66,
+      "gate_humano": true
+    },
+    {
+      "id": "n009",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 1,
+      "pred_severity": 1,
+      "confidence": 0.91,
+      "severity_confidence": 0.24,
+      "gate_humano": true
+    },
+    {
+      "id": "n010",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 1.0,
+      "severity_confidence": 0.82,
+      "gate_humano": false
+    },
+    {
+      "id": "n019",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 1.0,
+      "severity_confidence": 0.96,
+      "gate_humano": false
+    },
+    {
+      "id": "n020",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 1,
+      "pred_severity": 2,
+      "confidence": 0.72,
+      "severity_confidence": 0.78,
+      "gate_humano": true
+    },
+    {
+      "id": "n024",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.98,
+      "severity_confidence": 0.64,
+      "gate_humano": true
+    },
+    {
+      "id": "n026",
+      "gold_bucket": "riesgo",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.62,
+      "severity_confidence": 0.9,
+      "gate_humano": true
+    },
+    {
+      "id": "n029",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.98,
+      "severity_confidence": 0.96,
+      "gate_humano": false
+    },
+    {
+      "id": "n032",
+      "gold_bucket": "sin_accion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 1,
+      "pred_severity": 2,
+      "confidence": 0.88,
+      "severity_confidence": 0.37,
+      "gate_humano": true
+    },
+    {
+      "id": "n033",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 1,
+      "pred_severity": 1,
+      "confidence": 0.44,
+      "severity_confidence": 0.28,
+      "gate_humano": true
+    },
+    {
+      "id": "n039",
+      "gold_bucket": "riesgo",
+      "pred_bucket": "riesgo",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.86,
+      "severity_confidence": 0.66,
+      "gate_humano": true
+    },
+    {
+      "id": "n041",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 1,
+      "pred_severity": 1,
+      "confidence": 0.88,
+      "severity_confidence": 0.25,
+      "gate_humano": true
+    },
+    {
+      "id": "n053",
+      "gold_bucket": "riesgo",
+      "pred_bucket": "riesgo",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.86,
+      "severity_confidence": 0.46,
+      "gate_humano": true
+    },
+    {
+      "id": "n059",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.98,
+      "severity_confidence": 0.91,
+      "gate_humano": false
+    },
+    {
+      "id": "n061",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 1,
+      "pred_severity": 2,
+      "confidence": 0.53,
+      "severity_confidence": 0.73,
+      "gate_humano": true
+    },
+    {
+      "id": "n063",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.97,
+      "severity_confidence": 0.79,
+      "gate_humano": true
+    },
+    {
+      "id": "n065",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 1.0,
+      "severity_confidence": 0.94,
+      "gate_humano": false
+    },
+    {
+      "id": "n071",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.92,
+      "severity_confidence": 0.68,
+      "gate_humano": true
+    },
+    {
+      "id": "n079",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.97,
+      "severity_confidence": 0.82,
+      "gate_humano": false
+    },
+    {
+      "id": "n082",
+      "gold_bucket": "sin_accion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 1,
+      "pred_severity": 2,
+      "confidence": 0.73,
+      "severity_confidence": 0.37,
+      "gate_humano": true
+    },
+    {
+      "id": "n090",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.92,
+      "severity_confidence": 0.88,
+      "gate_humano": false
+    },
+    {
+      "id": "n098",
+      "gold_bucket": "riesgo",
+      "pred_bucket": "riesgo",
+      "gold_severity": 2,
+      "pred_severity": 1,
+      "confidence": 0.79,
+      "severity_confidence": 0.53,
+      "gate_humano": true
+    },
+    {
+      "id": "n100",
+      "gold_bucket": "sin_accion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 0,
+      "pred_severity": 1,
+      "confidence": 1.0,
+      "severity_confidence": 0.68,
+      "gate_humano": true
+    }
+  ],
+  "reporte_produccion": {
+    "gate": "choice [obligacion|riesgo|sin_accion] + score [severidad 0..2] + confidence",
+    "modelo": [
+      "jev-1.14.0"
+    ],
+    "umbral_gate_humano": 0.8,
+    "clausulas_al_gate": 26,
+    "por_bucket": {
+      "sin_accion": 9,
+      "obligacion": 14,
+      "riesgo": 3
+    },
+    "por_severidad": {
+      "sin_obligacion": 0,
+      "informativa_menor": 7,
+      "exigible_sancionable": 19
+    },
+    "in_tokens": 21270,
+    "latencia_ms": 963,
+    "costo_usd_estimado": 0.000893,
+    "tabla": [
+      {
+        "clausula": "n000",
+        "texto": "Vigente desde: 1 de septiembre de 2026 (versión 1)",
+        "decidido": "sin_accion",
+        "confianza": 1.0,
+        "severidad": 0.71,
+        "severidad_confianza": 0.53,
+        "nivel_severidad": "informativa_menor",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n002",
+        "texto": "Nequi S.A. Compañía de Financiamiento, en adelante \"Nequi\" o la \"Compañía\", iden…",
+        "decidido": "sin_accion",
+        "confianza": 0.8,
+        "severidad": 1.4,
+        "severidad_confianza": 0.1,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n003",
+        "texto": "A continuación, se listan las principales normas vigentes en Colombia en materia…",
+        "decidido": "sin_accion",
+        "confianza": 1.0,
+        "severidad": 1.08,
+        "severidad_confianza": 0.6,
+        "nivel_severidad": "informativa_menor",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n008",
+        "texto": "NEQUI S.A. CF. como responsable del tratamiento velará por la seguridad y calida…",
+        "decidido": "sin_accion",
+        "confianza": 0.62,
+        "severidad": 1.77,
+        "severidad_confianza": 0.66,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n009",
+        "texto": "Sin perjuicio del cumplimiento del deber de reserva bancaria y de la Ley 1266 de…",
+        "decidido": "sin_accion",
+        "confianza": 0.91,
+        "severidad": 1.4,
+        "severidad_confianza": 0.24,
+        "nivel_severidad": "informativa_menor",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n010",
+        "texto": "El tratamiento que se realice por parte de NEQUI S.A. CF. se basará en la autori…",
+        "decidido": "obligacion",
+        "confianza": 1.0,
+        "severidad": 1.88,
+        "severidad_confianza": 0.82,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": false
+      },
+      {
+        "clausula": "n019",
+        "texto": "NEQUI S.A. CF. solicitará la autorización de manera que el titular de la informa…",
+        "decidido": "obligacion",
+        "confianza": 1.0,
+        "severidad": 1.96,
+        "severidad_confianza": 0.96,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": false
+      },
+      {
+        "clausula": "n020",
+        "texto": "La autorización también podrá obtenerse a partir de conductas inequívocas del ti…",
+        "decidido": "obligacion",
+        "confianza": 0.72,
+        "severidad": 1.86,
+        "severidad_confianza": 0.78,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n024",
+        "texto": "NEQUI S.A. CF. conservará prueba de dichas autorizaciones, velando y respetando …",
+        "decidido": "obligacion",
+        "confianza": 0.98,
+        "severidad": 1.75,
+        "severidad_confianza": 0.64,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n026",
+        "texto": "NEQUI S.A. CF. podrá integrar SDK (Kits de Desarrollo de Software) propios o de …",
+        "decidido": "obligacion",
+        "confianza": 0.62,
+        "severidad": 1.93,
+        "severidad_confianza": 0.9,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n029",
+        "texto": "Para el tratamiento de datos sensibles, NEQUI S.A. CF. informará al titular de l…",
+        "decidido": "obligacion",
+        "confianza": 0.98,
+        "severidad": 1.96,
+        "severidad_confianza": 0.96,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": false
+      },
+      {
+        "clausula": "n032",
+        "texto": "NEQUI S.A. CF. informa a todos sus grupos de interés que, de conformidad con el …",
+        "decidido": "sin_accion",
+        "confianza": 0.88,
+        "severidad": 1.58,
+        "severidad_confianza": 0.37,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n033",
+        "texto": "Las siguientes son las finalidades con las que NEQUI S.A. CF. realiza el tratami…",
+        "decidido": "obligacion",
+        "confianza": 0.44,
+        "severidad": 1.12,
+        "severidad_confianza": 0.28,
+        "nivel_severidad": "informativa_menor",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n039",
+        "texto": "Acceso a la información de conexión, id del dispositivo móvil, IP, inventario de…",
+        "decidido": "riesgo",
+        "confianza": 0.86,
+        "severidad": 1.78,
+        "severidad_confianza": 0.66,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n041",
+        "texto": "El titular podrá habilitar o deshabilitar, a través de los controles y permisos …",
+        "decidido": "obligacion",
+        "confianza": 0.88,
+        "severidad": 1.38,
+        "severidad_confianza": 0.25,
+        "nivel_severidad": "informativa_menor",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n053",
+        "texto": "Estos Sistemas están diseñados para tomar decisiones automatizadas o asistir a t…",
+        "decidido": "riesgo",
+        "confianza": 0.86,
+        "severidad": 1.65,
+        "severidad_confianza": 0.46,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n059",
+        "texto": "NEQUI S.A. CF velará por el derecho de los titulares a decidir si comparten sus …",
+        "decidido": "obligacion",
+        "confianza": 0.98,
+        "severidad": 1.93,
+        "severidad_confianza": 0.91,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": false
+      },
+      {
+        "clausula": "n061",
+        "texto": "Los datos personales serán tratados por Nequi durante el tiempo que resulte nece…",
+        "decidido": "sin_accion",
+        "confianza": 0.53,
+        "severidad": 1.82,
+        "severidad_confianza": 0.73,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n063",
+        "texto": "Los titulares de la información que es objeto de tratamiento por NEQUI S.A. CF p…",
+        "decidido": "obligacion",
+        "confianza": 0.97,
+        "severidad": 1.85,
+        "severidad_confianza": 0.79,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n065",
+        "texto": "NEQUI S.A. CF como responsable de los datos personales almacenados en sus bases …",
+        "decidido": "obligacion",
+        "confianza": 1.0,
+        "severidad": 1.97,
+        "severidad_confianza": 0.94,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": false
+      },
+      {
+        "clausula": "n071",
+        "texto": "La consulta será atendida en un término máximo de diez (10) días hábiles contado…",
+        "decidido": "obligacion",
+        "confianza": 0.92,
+        "severidad": 1.79,
+        "severidad_confianza": 0.68,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n079",
+        "texto": "Ahora bien, el término máximo para atender el reclamo será de quince (15) días h…",
+        "decidido": "obligacion",
+        "confianza": 0.97,
+        "severidad": 1.89,
+        "severidad_confianza": 0.82,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": false
+      },
+      {
+        "clausula": "n082",
+        "texto": "En caso de solicitar la supresión de toda o parte de su información personal deb…",
+        "decidido": "sin_accion",
+        "confianza": 0.73,
+        "severidad": 1.58,
+        "severidad_confianza": 0.37,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n090",
+        "texto": "NEQUI S.A. CF está comprometido con verificar el nivel de los estándares de prot…",
+        "decidido": "obligacion",
+        "confianza": 0.92,
+        "severidad": 1.92,
+        "severidad_confianza": 0.88,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": false
+      },
+      {
+        "clausula": "n098",
+        "texto": "Esta política puede ser modificada en cualquier momento con el objeto de adaptar…",
+        "decidido": "riesgo",
+        "confianza": 0.79,
+        "severidad": 0.99,
+        "severidad_confianza": 0.53,
+        "nivel_severidad": "informativa_menor",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n100",
+        "texto": "La presente Política de Tratamiento de Datos Personales empieza a regir a partir…",
+        "decidido": "sin_accion",
+        "confianza": 1.0,
+        "severidad": 0.85,
+        "severidad_confianza": 0.68,
+        "nivel_severidad": "informativa_menor",
+        "gate_humano": true
+      }
+    ],
+    "clausulas_a_revision": [
+      "n000",
+      "n002",
+      "n003",
+      "n008",
+      "n009",
+      "n020",
+      "n024",
+      "n026",
+      "n032",
+      "n033",
+      "n039",
+      "n041",
+      "n053",
+      "n061",
+      "n063",
+      "n071",
+      "n082",
+      "n098",
+      "n100"
+    ]
+  }
+}

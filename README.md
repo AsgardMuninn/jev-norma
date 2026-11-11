@@ -93,6 +93,38 @@ pip install -e .[dev]
 pytest
 ```
 
+## Evaluación y calibración (gold set)
+
+El gate no se declara preciso por anécdota: hay un arnés que corre el pipeline de
+producción contra un set etiquetado y mide accuracy, matriz de confusión, MAE de
+severidad, ECE (calibración) y cobertura del gate.
+
+```bash
+python tools/eval_gold.py wu20/gold.jsonl --out wu20/evidence-wu20.json
+```
+
+Resultado medido el 2026-11-11 (modelo **jev-1.14.0**, 26 cláusulas de una política
+real, 21,270 tokens in, 963 ms, $0.000893):
+
+- accuracy bucket **0.846**; `obligacion` P 0.93 / R 0.81 · `riesgo` P 1.00 / R 0.75 · `sin_accion` P 0.67 / R 1.00.
+- severidad: exacta 0.615 · MAE **0.42** · dentro de 1 nivel **0.962**.
+- calibración: **ECE choice 0.023** (confianza fiable) vs **ECE severidad 0.198** (no usar para automatizar prioridades).
+- gate a 0.8: **7/26 auto-resueltas (cobertura 0.27) con 0 errores**; el resto a humano.
+- trade-off medido: si se ignora la confianza del eje severidad la cobertura sube a
+  0.73 con 1 error (obligación→sin_accion). La curva, no un umbral dogmático, es el
+  producto: el comprador elige el punto de operación.
+
+Limitación declarada: **n=26, un solo anotador, una sola política**. No es ground
+truth legal; es una prueba de conformidad con la rúbrica. Para mover el umbral global
+hace falta un gold set multi-política con segundo anotador.
+
+Pinnea la versión cuando un umbral dependa de la calibración (el alias `jev-latest`
+se movió a 1.14 el 14-oct-2026):
+
+```bash
+JEV_MODEL=jev-1.14.0 jev-norma politica.pdf --sample 12
+```
+
 ## Costo medido (API real, 2026-09/10)
 
 | Fuente | Cláusulas | Acierto | Costo | Latencia |
@@ -100,6 +132,7 @@ pytest
 | Sintético (WU1) | 12 | 11/12 (0.917) | $0.00017 | 12.9s (2 chunks) |
 | Nequi real (WU2) | 12 | 12/12 (1.0) | $0.00022 | 377 ms |
 | Banrep real no-Webflow (WU4/WU5) | 23 | gate fail-open | $0.00019 | 411 ms |
+| Gold set Nequi (WU20) | 26 | 22/26 (0.846) | $0.000893 | 963 ms |
 
 ## Licencia
 
