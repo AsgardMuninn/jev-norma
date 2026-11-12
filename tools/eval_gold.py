@@ -23,6 +23,7 @@ from jev_norma.metrics import (  # noqa: E402
     DEFAULT_SWEEP,
     coverage_curve,
     evaluate,
+    evaluate_by_source,
     recommended_point,
     rows_from_report,
 )
@@ -62,6 +63,8 @@ def main(argv=None) -> int:
     ap.add_argument("--from-evidence", default=None,
                     help="recalcula métricas+curva desde una evidencia guardada, SIN llamar a la API")
     ap.add_argument("--sweep", action="store_true", help="imprime la curva cobertura↔accuracy")
+    ap.add_argument("--by-source", action="store_true",
+                    help="desagrega métricas y curva POR FUENTE (estabilidad cross-documento)")
     args = ap.parse_args(argv)
 
     if args.from_evidence:
@@ -80,17 +83,22 @@ def main(argv=None) -> int:
             "punto_recomendado": recommended_point(coverage_curve(rows)),
             "filas": rows,
         }
+        if args.by_source:
+            evidence["por_fuente"] = evaluate_by_source(rows, threshold=GATE_UMBRAL)
     else:
         if not args.gold:
             ap.error("se requiere `gold.jsonl` o `--from-evidence`")
         gold = load_gold(Path(args.gold))
         sample = {g["id"]: g["text"] for g in gold}
         gold_by_id = {g["id"]: {"bucket": g["bucket"], "severity": g["severity"]} for g in gold}
+        source_by_id = {g["id"]: g.get("source", "?") for g in gold}
 
         prod = gate(sample, model=args.model)
         report = build_report(sample, prod["answers"], prod["in_tokens"], prod["latencia_ms"],
                               modelo=prod["modelo"])
         rows = rows_from_report(report["tabla"], gold_by_id)
+        for r in rows:
+            r["source"] = source_by_id.get(r["id"], "?")
         ev = evaluate(rows, threshold=GATE_UMBRAL)
         evidence = {
             "fecha": datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds"),
@@ -108,6 +116,8 @@ def main(argv=None) -> int:
             "filas": rows,
             "reporte_produccion": report,
         }
+        if args.by_source:
+            evidence["por_fuente"] = evaluate_by_source(rows, threshold=GATE_UMBRAL)
 
     out = json.dumps(evidence, ensure_ascii=False, indent=2)
     if args.out:
@@ -140,6 +150,15 @@ def main(argv=None) -> int:
           f"accuracy_auto={auto}  errores_auto={g['errors_auto']}")
     if args.sweep:
         _print_curve(evidence["curva"])
+    if args.by_source:
+        print("\npor fuente (estabilidad cross-documento):")
+        for src, d in evidence["por_fuente"].items():
+            e = d["evaluacion"]
+            rec = d["punto_recomendado"]
+            rec_txt = "ninguno 0-errores" if rec is None else f"umbral {rec['umbral']:.2f}"
+            print(f"  {src[:34]:<34} n={d['n']:<3} acc={e['accuracy_bucket']:.3f} "
+                  f"ECE={e['ece_bucket']:.3f} gate@{e['gate']['umbral']}: auto={e['gate']['auto']} "
+                  f"err={e['gate']['errors_auto']} | recomendado={rec_txt}")
     if args.out:
         print(f"(evidencia en {args.out})")
     return 0

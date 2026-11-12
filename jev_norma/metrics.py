@@ -164,6 +164,30 @@ def recommended_point(curve: list[dict]):
     return max(seguros, key=lambda p: (p["cobertura"], -p["umbral"]))
 
 
+def evaluate_by_source(rows: list[dict], threshold: float = 0.8, n_bins: int = 5) -> dict:
+    """Desagrega accuracy/calibración y curva cobertura↔accuracy POR FUENTE (documento).
+
+    Una accuracy global puede esconder una política con 0.95 y otra con 0.60; la
+    estabilidad cross-documento es justo lo que hay que medir antes de fijar un
+    umbral por defecto. PURA: agrupa por `row["source"]` (ausente -> "?"), no
+    toca red ni disco. Devuelve {} sin filas (no inventa fuentes vacías).
+    """
+    grupos: dict[str, list[dict]] = {}
+    for r in rows:
+        grupos.setdefault(r.get("source") or "?", []).append(r)
+    out: dict[str, dict] = {}
+    for src in sorted(grupos):
+        rs = grupos[src]
+        curva = coverage_curve(rs)
+        out[src] = {
+            "n": len(rs),
+            "evaluacion": evaluate(rs, threshold=threshold, n_bins=n_bins),
+            "curva": curva,
+            "punto_recomendado": recommended_point(curva),
+        }
+    return out
+
+
 def evaluate(rows: list[dict], threshold: float = 0.8, n_bins: int = 5) -> dict:
     """Reporte completo de accuracy/calibración/cobertura sobre filas gold+predicción."""
     sev_rows = [r for r in rows if r.get("pred_severity") is not None and r.get("gold_severity") is not None]
@@ -212,4 +236,4 @@ def rows_from_report(tabla: list[dict], gold_by_id: dict) -> list[dict]:
 
 __all__ = ["LABELS", "SEVERITIES", "SEVERITY_NAMES", "DEFAULT_SWEEP", "accuracy", "confusion", "per_class",
            "severity_mae", "severity_within_one", "reliability", "ece", "gate_summary", "coverage_curve",
-           "recommended_point", "evaluate", "rows_from_report"]
+           "recommended_point", "evaluate", "evaluate_by_source", "rows_from_report"]

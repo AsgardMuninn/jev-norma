@@ -1,0 +1,2007 @@
+{
+  "fecha": "2026-11-12T11:11:11-05:00",
+  "origen": "api",
+  "gold": {
+    "ruta": "wu22/gold_multi.jsonl",
+    "n": 52,
+    "fuente": [
+      "logistral-politica-tratamiento-datos",
+      "nequi-politica-tratamiento-datos"
+    ],
+    "nota": "etiquetado por un solo anotador con rúbrica documentada; no es ground truth legal"
+  },
+  "modelo": [
+    "jev-1.14.0"
+  ],
+  "ejecucion": {
+    "chunk_size": 6,
+    "in_tokens": 45108,
+    "out_tokens": 3343,
+    "latencia_ms": 2100,
+    "costo_usd_estimado": 0.001895
+  },
+  "evaluacion": {
+    "n": 52,
+    "accuracy_bucket": 0.7115384615384616,
+    "matriz_confusion": {
+      "obligacion": {
+        "obligacion": 22,
+        "riesgo": 0,
+        "sin_accion": 6
+      },
+      "riesgo": {
+        "obligacion": 4,
+        "riesgo": 5,
+        "sin_accion": 2
+      },
+      "sin_accion": {
+        "obligacion": 3,
+        "riesgo": 0,
+        "sin_accion": 10
+      }
+    },
+    "por_clase": {
+      "obligacion": {
+        "tp": 22,
+        "fp": 7,
+        "fn": 6,
+        "precision": 0.7586206896551724,
+        "recall": 0.7857142857142857,
+        "f1": 0.7719298245614034,
+        "support": 28
+      },
+      "riesgo": {
+        "tp": 5,
+        "fp": 0,
+        "fn": 6,
+        "precision": 1.0,
+        "recall": 0.45454545454545453,
+        "f1": 0.625,
+        "support": 11
+      },
+      "sin_accion": {
+        "tp": 10,
+        "fp": 8,
+        "fn": 3,
+        "precision": 0.5555555555555556,
+        "recall": 0.7692307692307693,
+        "f1": 0.6451612903225806,
+        "support": 13
+      }
+    },
+    "severidad_accuracy_exacta": 0.5961538461538461,
+    "severidad_mae": 0.4230769230769231,
+    "severidad_dentro_de_1": 0.9807692307692307,
+    "ece_bucket": 0.06826923076923082,
+    "ece_severidad": 0.20634615384615382,
+    "fiabilidad_bucket": [
+      {
+        "lo": 0.0,
+        "hi": 0.2,
+        "n": 0,
+        "avg_confidence": null,
+        "accuracy": null
+      },
+      {
+        "lo": 0.2,
+        "hi": 0.4,
+        "n": 3,
+        "avg_confidence": 0.32,
+        "accuracy": 0.0
+      },
+      {
+        "lo": 0.4,
+        "hi": 0.6,
+        "n": 7,
+        "avg_confidence": 0.47714285714285715,
+        "accuracy": 0.2857142857142857
+      },
+      {
+        "lo": 0.6,
+        "hi": 0.8,
+        "n": 13,
+        "avg_confidence": 0.7115384615384616,
+        "accuracy": 0.6923076923076923
+      },
+      {
+        "lo": 0.8,
+        "hi": 1.0,
+        "n": 29,
+        "avg_confidence": 0.9310344827586208,
+        "accuracy": 0.896551724137931
+      }
+    ],
+    "fiabilidad_severidad": [
+      {
+        "lo": 0.0,
+        "hi": 0.2,
+        "n": 2,
+        "avg_confidence": 0.085,
+        "accuracy": 0.0
+      },
+      {
+        "lo": 0.2,
+        "hi": 0.4,
+        "n": 10,
+        "avg_confidence": 0.318,
+        "accuracy": 0.7
+      },
+      {
+        "lo": 0.4,
+        "hi": 0.6,
+        "n": 9,
+        "avg_confidence": 0.508888888888889,
+        "accuracy": 0.4444444444444444
+      },
+      {
+        "lo": 0.6,
+        "hi": 0.8,
+        "n": 14,
+        "avg_confidence": 0.6814285714285714,
+        "accuracy": 0.2857142857142857
+      },
+      {
+        "lo": 0.8,
+        "hi": 1.0,
+        "n": 17,
+        "avg_confidence": 0.9047058823529412,
+        "accuracy": 0.9411764705882353
+      }
+    ],
+    "gate": {
+      "n": 52,
+      "umbral": 0.8,
+      "revisadas": 38,
+      "fraccion_revision": 0.7307692307692307,
+      "auto": 14,
+      "accuracy_auto": 0.9285714285714286,
+      "errors_auto": 1
+    }
+  },
+  "curva": [
+    {
+      "umbral": 0.0,
+      "n": 52,
+      "auto": 52,
+      "cobertura": 1.0,
+      "accuracy_auto": 0.7115384615384616,
+      "errores_auto": 15,
+      "ids_errores": [
+        "n008",
+        "n009",
+        "n026",
+        "n061",
+        "L003",
+        "L009",
+        "L014",
+        "L017",
+        "L018",
+        "L020",
+        "L027",
+        "L029",
+        "L033",
+        "L035",
+        "L040"
+      ]
+    },
+    {
+      "umbral": 0.5,
+      "n": 52,
+      "auto": 44,
+      "cobertura": 0.8461538461538461,
+      "accuracy_auto": 0.8181818181818182,
+      "errores_auto": 8,
+      "ids_errores": [
+        "n008",
+        "n009",
+        "n026",
+        "L003",
+        "L009",
+        "L027",
+        "L035",
+        "L040"
+      ]
+    },
+    {
+      "umbral": 0.6,
+      "n": 52,
+      "auto": 42,
+      "cobertura": 0.8076923076923077,
+      "accuracy_auto": 0.8333333333333334,
+      "errores_auto": 7,
+      "ids_errores": [
+        "n008",
+        "n009",
+        "n026",
+        "L003",
+        "L009",
+        "L027",
+        "L035"
+      ]
+    },
+    {
+      "umbral": 0.7,
+      "n": 52,
+      "auto": 38,
+      "cobertura": 0.7307692307692307,
+      "accuracy_auto": 0.8947368421052632,
+      "errores_auto": 4,
+      "ids_errores": [
+        "n009",
+        "L003",
+        "L009",
+        "L035"
+      ]
+    },
+    {
+      "umbral": 0.75,
+      "n": 52,
+      "auto": 33,
+      "cobertura": 0.6346153846153846,
+      "accuracy_auto": 0.9090909090909091,
+      "errores_auto": 3,
+      "ids_errores": [
+        "n009",
+        "L009",
+        "L035"
+      ]
+    },
+    {
+      "umbral": 0.8,
+      "n": 52,
+      "auto": 29,
+      "cobertura": 0.5576923076923077,
+      "accuracy_auto": 0.896551724137931,
+      "errores_auto": 3,
+      "ids_errores": [
+        "n009",
+        "L009",
+        "L035"
+      ]
+    },
+    {
+      "umbral": 0.85,
+      "n": 52,
+      "auto": 25,
+      "cobertura": 0.4807692307692308,
+      "accuracy_auto": 0.96,
+      "errores_auto": 1,
+      "ids_errores": [
+        "n009"
+      ]
+    },
+    {
+      "umbral": 0.9,
+      "n": 52,
+      "auto": 17,
+      "cobertura": 0.3269230769230769,
+      "accuracy_auto": 1.0,
+      "errores_auto": 0,
+      "ids_errores": []
+    },
+    {
+      "umbral": 0.95,
+      "n": 52,
+      "auto": 16,
+      "cobertura": 0.3076923076923077,
+      "accuracy_auto": 1.0,
+      "errores_auto": 0,
+      "ids_errores": []
+    },
+    {
+      "umbral": 1.0,
+      "n": 52,
+      "auto": 8,
+      "cobertura": 0.15384615384615385,
+      "accuracy_auto": 1.0,
+      "errores_auto": 0,
+      "ids_errores": []
+    }
+  ],
+  "punto_recomendado": {
+    "umbral": 0.9,
+    "n": 52,
+    "auto": 17,
+    "cobertura": 0.3269230769230769,
+    "accuracy_auto": 1.0,
+    "errores_auto": 0,
+    "ids_errores": []
+  },
+  "filas": [
+    {
+      "id": "n000",
+      "gold_bucket": "sin_accion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 0,
+      "pred_severity": 1,
+      "confidence": 1.0,
+      "severity_confidence": 0.6,
+      "gate_humano": true,
+      "source": "nequi-politica-tratamiento-datos"
+    },
+    {
+      "id": "n002",
+      "gold_bucket": "sin_accion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 0,
+      "pred_severity": 1,
+      "confidence": 0.79,
+      "severity_confidence": 0.2,
+      "gate_humano": true,
+      "source": "nequi-politica-tratamiento-datos"
+    },
+    {
+      "id": "n003",
+      "gold_bucket": "sin_accion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 0,
+      "pred_severity": 1,
+      "confidence": 1.0,
+      "severity_confidence": 0.62,
+      "gate_humano": true,
+      "source": "nequi-politica-tratamiento-datos"
+    },
+    {
+      "id": "n008",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 1,
+      "pred_severity": 2,
+      "confidence": 0.6,
+      "severity_confidence": 0.68,
+      "gate_humano": true,
+      "source": "nequi-politica-tratamiento-datos"
+    },
+    {
+      "id": "n009",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 1,
+      "pred_severity": 1,
+      "confidence": 0.88,
+      "severity_confidence": 0.22,
+      "gate_humano": true,
+      "source": "nequi-politica-tratamiento-datos"
+    },
+    {
+      "id": "n010",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 1.0,
+      "severity_confidence": 0.8,
+      "gate_humano": false,
+      "source": "nequi-politica-tratamiento-datos"
+    },
+    {
+      "id": "n019",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 1.0,
+      "severity_confidence": 0.97,
+      "gate_humano": false,
+      "source": "nequi-politica-tratamiento-datos"
+    },
+    {
+      "id": "n020",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 1,
+      "pred_severity": 2,
+      "confidence": 0.74,
+      "severity_confidence": 0.76,
+      "gate_humano": true,
+      "source": "nequi-politica-tratamiento-datos"
+    },
+    {
+      "id": "n024",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.97,
+      "severity_confidence": 0.62,
+      "gate_humano": true,
+      "source": "nequi-politica-tratamiento-datos"
+    },
+    {
+      "id": "n026",
+      "gold_bucket": "riesgo",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.62,
+      "severity_confidence": 0.9,
+      "gate_humano": true,
+      "source": "nequi-politica-tratamiento-datos"
+    },
+    {
+      "id": "n029",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.98,
+      "severity_confidence": 0.94,
+      "gate_humano": false,
+      "source": "nequi-politica-tratamiento-datos"
+    },
+    {
+      "id": "n032",
+      "gold_bucket": "sin_accion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 1,
+      "pred_severity": 2,
+      "confidence": 0.86,
+      "severity_confidence": 0.37,
+      "gate_humano": true,
+      "source": "nequi-politica-tratamiento-datos"
+    },
+    {
+      "id": "n033",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 1,
+      "pred_severity": 1,
+      "confidence": 0.48,
+      "severity_confidence": 0.33,
+      "gate_humano": true,
+      "source": "nequi-politica-tratamiento-datos"
+    },
+    {
+      "id": "n039",
+      "gold_bucket": "riesgo",
+      "pred_bucket": "riesgo",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.88,
+      "severity_confidence": 0.64,
+      "gate_humano": true,
+      "source": "nequi-politica-tratamiento-datos"
+    },
+    {
+      "id": "n041",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 1,
+      "pred_severity": 1,
+      "confidence": 0.88,
+      "severity_confidence": 0.32,
+      "gate_humano": true,
+      "source": "nequi-politica-tratamiento-datos"
+    },
+    {
+      "id": "n053",
+      "gold_bucket": "riesgo",
+      "pred_bucket": "riesgo",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.89,
+      "severity_confidence": 0.52,
+      "gate_humano": true,
+      "source": "nequi-politica-tratamiento-datos"
+    },
+    {
+      "id": "n059",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.98,
+      "severity_confidence": 0.91,
+      "gate_humano": false,
+      "source": "nequi-politica-tratamiento-datos"
+    },
+    {
+      "id": "n061",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 1,
+      "pred_severity": 2,
+      "confidence": 0.48,
+      "severity_confidence": 0.74,
+      "gate_humano": true,
+      "source": "nequi-politica-tratamiento-datos"
+    },
+    {
+      "id": "n063",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.96,
+      "severity_confidence": 0.84,
+      "gate_humano": false,
+      "source": "nequi-politica-tratamiento-datos"
+    },
+    {
+      "id": "n065",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 1.0,
+      "severity_confidence": 0.98,
+      "gate_humano": false,
+      "source": "nequi-politica-tratamiento-datos"
+    },
+    {
+      "id": "n071",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.91,
+      "severity_confidence": 0.72,
+      "gate_humano": true,
+      "source": "nequi-politica-tratamiento-datos"
+    },
+    {
+      "id": "n079",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.97,
+      "severity_confidence": 0.82,
+      "gate_humano": false,
+      "source": "nequi-politica-tratamiento-datos"
+    },
+    {
+      "id": "n082",
+      "gold_bucket": "sin_accion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 1,
+      "pred_severity": 2,
+      "confidence": 0.74,
+      "severity_confidence": 0.42,
+      "gate_humano": true,
+      "source": "nequi-politica-tratamiento-datos"
+    },
+    {
+      "id": "n090",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.89,
+      "severity_confidence": 0.88,
+      "gate_humano": false,
+      "source": "nequi-politica-tratamiento-datos"
+    },
+    {
+      "id": "n098",
+      "gold_bucket": "riesgo",
+      "pred_bucket": "riesgo",
+      "gold_severity": 2,
+      "pred_severity": 1,
+      "confidence": 0.76,
+      "severity_confidence": 0.53,
+      "gate_humano": true,
+      "source": "nequi-politica-tratamiento-datos"
+    },
+    {
+      "id": "n100",
+      "gold_bucket": "sin_accion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 0,
+      "pred_severity": 1,
+      "confidence": 1.0,
+      "severity_confidence": 0.68,
+      "gate_humano": true,
+      "source": "nequi-politica-tratamiento-datos"
+    },
+    {
+      "id": "L001",
+      "gold_bucket": "sin_accion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 0,
+      "pred_severity": 2,
+      "confidence": 0.82,
+      "severity_confidence": 0.17,
+      "gate_humano": true,
+      "source": "logistral-politica-tratamiento-datos"
+    },
+    {
+      "id": "L002",
+      "gold_bucket": "sin_accion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 1,
+      "pred_severity": 1,
+      "confidence": 0.77,
+      "severity_confidence": 0.38,
+      "gate_humano": true,
+      "source": "logistral-politica-tratamiento-datos"
+    },
+    {
+      "id": "L003",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 1,
+      "pred_severity": 2,
+      "confidence": 0.74,
+      "severity_confidence": 0.74,
+      "gate_humano": true,
+      "source": "logistral-politica-tratamiento-datos"
+    },
+    {
+      "id": "L006",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.89,
+      "severity_confidence": 0.96,
+      "gate_humano": false,
+      "source": "logistral-politica-tratamiento-datos"
+    },
+    {
+      "id": "L009",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 1,
+      "pred_severity": 1,
+      "confidence": 0.8,
+      "severity_confidence": 0.34,
+      "gate_humano": true,
+      "source": "logistral-politica-tratamiento-datos"
+    },
+    {
+      "id": "L010",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 1,
+      "pred_severity": 2,
+      "confidence": 0.89,
+      "severity_confidence": 0.9,
+      "gate_humano": false,
+      "source": "logistral-politica-tratamiento-datos"
+    },
+    {
+      "id": "L012",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 1,
+      "confidence": 0.73,
+      "severity_confidence": 0.31,
+      "gate_humano": true,
+      "source": "logistral-politica-tratamiento-datos"
+    },
+    {
+      "id": "L013",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.98,
+      "severity_confidence": 0.76,
+      "gate_humano": true,
+      "source": "logistral-politica-tratamiento-datos"
+    },
+    {
+      "id": "L014",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 1,
+      "pred_severity": 2,
+      "confidence": 0.37,
+      "severity_confidence": 0.0,
+      "gate_humano": true,
+      "source": "logistral-politica-tratamiento-datos"
+    },
+    {
+      "id": "L015",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 1.0,
+      "severity_confidence": 0.98,
+      "gate_humano": false,
+      "source": "logistral-politica-tratamiento-datos"
+    },
+    {
+      "id": "L016",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.98,
+      "severity_confidence": 0.94,
+      "gate_humano": false,
+      "source": "logistral-politica-tratamiento-datos"
+    },
+    {
+      "id": "L017",
+      "gold_bucket": "riesgo",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.43,
+      "severity_confidence": 0.37,
+      "gate_humano": true,
+      "source": "logistral-politica-tratamiento-datos"
+    },
+    {
+      "id": "L018",
+      "gold_bucket": "riesgo",
+      "pred_bucket": "obligacion",
+      "gold_severity": 1,
+      "pred_severity": 2,
+      "confidence": 0.28,
+      "severity_confidence": 0.58,
+      "gate_humano": true,
+      "source": "logistral-politica-tratamiento-datos"
+    },
+    {
+      "id": "L020",
+      "gold_bucket": "sin_accion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 1,
+      "pred_severity": 2,
+      "confidence": 0.31,
+      "severity_confidence": 0.64,
+      "gate_humano": true,
+      "source": "logistral-politica-tratamiento-datos"
+    },
+    {
+      "id": "L022",
+      "gold_bucket": "sin_accion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 1,
+      "pred_severity": 1,
+      "confidence": 0.67,
+      "severity_confidence": 0.49,
+      "gate_humano": true,
+      "source": "logistral-politica-tratamiento-datos"
+    },
+    {
+      "id": "L024",
+      "gold_bucket": "riesgo",
+      "pred_bucket": "riesgo",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.7,
+      "severity_confidence": 0.9,
+      "gate_humano": true,
+      "source": "logistral-politica-tratamiento-datos"
+    },
+    {
+      "id": "L025",
+      "gold_bucket": "riesgo",
+      "pred_bucket": "riesgo",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.58,
+      "severity_confidence": 0.44,
+      "gate_humano": true,
+      "source": "logistral-politica-tratamiento-datos"
+    },
+    {
+      "id": "L027",
+      "gold_bucket": "sin_accion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 1,
+      "pred_severity": 2,
+      "confidence": 0.62,
+      "severity_confidence": 0.46,
+      "gate_humano": true,
+      "source": "logistral-politica-tratamiento-datos"
+    },
+    {
+      "id": "L029",
+      "gold_bucket": "riesgo",
+      "pred_bucket": "obligacion",
+      "gold_severity": 1,
+      "pred_severity": 2,
+      "confidence": 0.4,
+      "severity_confidence": 0.56,
+      "gate_humano": true,
+      "source": "logistral-politica-tratamiento-datos"
+    },
+    {
+      "id": "L030",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 1,
+      "pred_severity": 2,
+      "confidence": 0.8,
+      "severity_confidence": 0.67,
+      "gate_humano": true,
+      "source": "logistral-politica-tratamiento-datos"
+    },
+    {
+      "id": "L033",
+      "gold_bucket": "sin_accion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 1,
+      "pred_severity": 1,
+      "confidence": 0.44,
+      "severity_confidence": 0.58,
+      "gate_humano": true,
+      "source": "logistral-politica-tratamiento-datos"
+    },
+    {
+      "id": "L035",
+      "gold_bucket": "riesgo",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 1,
+      "pred_severity": 1,
+      "confidence": 0.82,
+      "severity_confidence": 0.84,
+      "gate_humano": false,
+      "source": "logistral-politica-tratamiento-datos"
+    },
+    {
+      "id": "L038",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 1.0,
+      "severity_confidence": 0.91,
+      "gate_humano": false,
+      "source": "logistral-politica-tratamiento-datos"
+    },
+    {
+      "id": "L039",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.77,
+      "severity_confidence": 0.91,
+      "gate_humano": true,
+      "source": "logistral-politica-tratamiento-datos"
+    },
+    {
+      "id": "L040",
+      "gold_bucket": "riesgo",
+      "pred_bucket": "obligacion",
+      "gold_severity": 1,
+      "pred_severity": 1,
+      "confidence": 0.53,
+      "severity_confidence": 0.34,
+      "gate_humano": true,
+      "source": "logistral-politica-tratamiento-datos"
+    },
+    {
+      "id": "L041",
+      "gold_bucket": "sin_accion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 0,
+      "pred_severity": 1,
+      "confidence": 0.97,
+      "severity_confidence": 0.67,
+      "gate_humano": true,
+      "source": "logistral-politica-tratamiento-datos"
+    }
+  ],
+  "reporte_produccion": {
+    "gate": "choice [obligacion|riesgo|sin_accion] + score [severidad 0..2] + confidence",
+    "modelo": [
+      "jev-1.14.0"
+    ],
+    "umbral_gate_humano": 0.8,
+    "clausulas_al_gate": 52,
+    "por_bucket": {
+      "sin_accion": 18,
+      "obligacion": 29,
+      "riesgo": 5
+    },
+    "por_severidad": {
+      "sin_obligacion": 0,
+      "informativa_menor": 16,
+      "exigible_sancionable": 36
+    },
+    "in_tokens": 45108,
+    "latencia_ms": 2100,
+    "costo_usd_estimado": 0.001895,
+    "tabla": [
+      {
+        "clausula": "n000",
+        "texto": "Vigente desde: 1 de septiembre de 2026 (versión 1)",
+        "decidido": "sin_accion",
+        "confianza": 1.0,
+        "severidad": 0.75,
+        "severidad_confianza": 0.6,
+        "nivel_severidad": "informativa_menor",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n002",
+        "texto": "Nequi S.A. Compañía de Financiamiento, en adelante \"Nequi\" o la \"Compañía\", iden…",
+        "decidido": "sin_accion",
+        "confianza": 0.79,
+        "severidad": 1.39,
+        "severidad_confianza": 0.2,
+        "nivel_severidad": "informativa_menor",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n003",
+        "texto": "A continuación, se listan las principales normas vigentes en Colombia en materia…",
+        "decidido": "sin_accion",
+        "confianza": 1.0,
+        "severidad": 1.07,
+        "severidad_confianza": 0.62,
+        "nivel_severidad": "informativa_menor",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n008",
+        "texto": "NEQUI S.A. CF. como responsable del tratamiento velará por la seguridad y calida…",
+        "decidido": "sin_accion",
+        "confianza": 0.6,
+        "severidad": 1.8,
+        "severidad_confianza": 0.68,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n009",
+        "texto": "Sin perjuicio del cumplimiento del deber de reserva bancaria y de la Ley 1266 de…",
+        "decidido": "sin_accion",
+        "confianza": 0.88,
+        "severidad": 1.4,
+        "severidad_confianza": 0.22,
+        "nivel_severidad": "informativa_menor",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n010",
+        "texto": "El tratamiento que se realice por parte de NEQUI S.A. CF. se basará en la autori…",
+        "decidido": "obligacion",
+        "confianza": 1.0,
+        "severidad": 1.86,
+        "severidad_confianza": 0.8,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": false
+      },
+      {
+        "clausula": "n019",
+        "texto": "NEQUI S.A. CF. solicitará la autorización de manera que el titular de la informa…",
+        "decidido": "obligacion",
+        "confianza": 1.0,
+        "severidad": 1.97,
+        "severidad_confianza": 0.97,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": false
+      },
+      {
+        "clausula": "n020",
+        "texto": "La autorización también podrá obtenerse a partir de conductas inequívocas del ti…",
+        "decidido": "obligacion",
+        "confianza": 0.74,
+        "severidad": 1.84,
+        "severidad_confianza": 0.76,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n024",
+        "texto": "NEQUI S.A. CF. conservará prueba de dichas autorizaciones, velando y respetando …",
+        "decidido": "obligacion",
+        "confianza": 0.97,
+        "severidad": 1.75,
+        "severidad_confianza": 0.62,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n026",
+        "texto": "NEQUI S.A. CF. podrá integrar SDK (Kits de Desarrollo de Software) propios o de …",
+        "decidido": "obligacion",
+        "confianza": 0.62,
+        "severidad": 1.93,
+        "severidad_confianza": 0.9,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n029",
+        "texto": "Para el tratamiento de datos sensibles, NEQUI S.A. CF. informará al titular de l…",
+        "decidido": "obligacion",
+        "confianza": 0.98,
+        "severidad": 1.96,
+        "severidad_confianza": 0.94,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": false
+      },
+      {
+        "clausula": "n032",
+        "texto": "NEQUI S.A. CF. informa a todos sus grupos de interés que, de conformidad con el …",
+        "decidido": "sin_accion",
+        "confianza": 0.86,
+        "severidad": 1.58,
+        "severidad_confianza": 0.37,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n033",
+        "texto": "Las siguientes son las finalidades con las que NEQUI S.A. CF. realiza el tratami…",
+        "decidido": "obligacion",
+        "confianza": 0.48,
+        "severidad": 1.13,
+        "severidad_confianza": 0.33,
+        "nivel_severidad": "informativa_menor",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n039",
+        "texto": "Acceso a la información de conexión, id del dispositivo móvil, IP, inventario de…",
+        "decidido": "riesgo",
+        "confianza": 0.88,
+        "severidad": 1.76,
+        "severidad_confianza": 0.64,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n041",
+        "texto": "El titular podrá habilitar o deshabilitar, a través de los controles y permisos …",
+        "decidido": "obligacion",
+        "confianza": 0.88,
+        "severidad": 1.36,
+        "severidad_confianza": 0.32,
+        "nivel_severidad": "informativa_menor",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n053",
+        "texto": "Estos Sistemas están diseñados para tomar decisiones automatizadas o asistir a t…",
+        "decidido": "riesgo",
+        "confianza": 0.89,
+        "severidad": 1.68,
+        "severidad_confianza": 0.52,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n059",
+        "texto": "NEQUI S.A. CF velará por el derecho de los titulares a decidir si comparten sus …",
+        "decidido": "obligacion",
+        "confianza": 0.98,
+        "severidad": 1.94,
+        "severidad_confianza": 0.91,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": false
+      },
+      {
+        "clausula": "n061",
+        "texto": "Los datos personales serán tratados por Nequi durante el tiempo que resulte nece…",
+        "decidido": "sin_accion",
+        "confianza": 0.48,
+        "severidad": 1.82,
+        "severidad_confianza": 0.74,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n063",
+        "texto": "Los titulares de la información que es objeto de tratamiento por NEQUI S.A. CF p…",
+        "decidido": "obligacion",
+        "confianza": 0.96,
+        "severidad": 1.89,
+        "severidad_confianza": 0.84,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": false
+      },
+      {
+        "clausula": "n065",
+        "texto": "NEQUI S.A. CF como responsable de los datos personales almacenados en sus bases …",
+        "decidido": "obligacion",
+        "confianza": 1.0,
+        "severidad": 1.98,
+        "severidad_confianza": 0.98,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": false
+      },
+      {
+        "clausula": "n071",
+        "texto": "La consulta será atendida en un término máximo de diez (10) días hábiles contado…",
+        "decidido": "obligacion",
+        "confianza": 0.91,
+        "severidad": 1.8,
+        "severidad_confianza": 0.72,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n079",
+        "texto": "Ahora bien, el término máximo para atender el reclamo será de quince (15) días h…",
+        "decidido": "obligacion",
+        "confianza": 0.97,
+        "severidad": 1.89,
+        "severidad_confianza": 0.82,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": false
+      },
+      {
+        "clausula": "n082",
+        "texto": "En caso de solicitar la supresión de toda o parte de su información personal deb…",
+        "decidido": "sin_accion",
+        "confianza": 0.74,
+        "severidad": 1.61,
+        "severidad_confianza": 0.42,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n090",
+        "texto": "NEQUI S.A. CF está comprometido con verificar el nivel de los estándares de prot…",
+        "decidido": "obligacion",
+        "confianza": 0.89,
+        "severidad": 1.92,
+        "severidad_confianza": 0.88,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": false
+      },
+      {
+        "clausula": "n098",
+        "texto": "Esta política puede ser modificada en cualquier momento con el objeto de adaptar…",
+        "decidido": "riesgo",
+        "confianza": 0.76,
+        "severidad": 1.01,
+        "severidad_confianza": 0.53,
+        "nivel_severidad": "informativa_menor",
+        "gate_humano": true
+      },
+      {
+        "clausula": "n100",
+        "texto": "La presente Política de Tratamiento de Datos Personales empieza a regir a partir…",
+        "decidido": "sin_accion",
+        "confianza": 1.0,
+        "severidad": 0.85,
+        "severidad_confianza": 0.68,
+        "nivel_severidad": "informativa_menor",
+        "gate_humano": true
+      },
+      {
+        "clausula": "L001",
+        "texto": "900.161.726-3, empresa colombiana domiciliada La Estrella (Antioquia), dedicada …",
+        "decidido": "sin_accion",
+        "confianza": 0.82,
+        "severidad": 1.45,
+        "severidad_confianza": 0.17,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "L002",
+        "texto": "2.1. OBJETO: La presente Política y los procedimientos previstos en este documen…",
+        "decidido": "sin_accion",
+        "confianza": 0.77,
+        "severidad": 1.23,
+        "severidad_confianza": 0.38,
+        "nivel_severidad": "informativa_menor",
+        "gate_humano": true
+      },
+      {
+        "clausula": "L003",
+        "texto": "2.2. ALCANCE: Todos los funcionarios, colaboradores, contratistas y aliados come…",
+        "decidido": "sin_accion",
+        "confianza": 0.74,
+        "severidad": 1.82,
+        "severidad_confianza": 0.74,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "L006",
+        "texto": "El tratamiento de datos sensibles está sujeto a un régimen de excepción y solo s…",
+        "decidido": "obligacion",
+        "confianza": 0.89,
+        "severidad": 1.96,
+        "severidad_confianza": 0.96,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": false
+      },
+      {
+        "clausula": "L009",
+        "texto": "Es un compromiso de LOGISTRAL S.A.S. entender y aplicar de manera armónica los p…",
+        "decidido": "sin_accion",
+        "confianza": 0.8,
+        "severidad": 1.14,
+        "severidad_confianza": 0.34,
+        "nivel_severidad": "informativa_menor",
+        "gate_humano": true
+      },
+      {
+        "clausula": "L010",
+        "texto": "a. Principio de legalidad: El tratamiento es una actividad reglada que debe suje…",
+        "decidido": "obligacion",
+        "confianza": 0.89,
+        "severidad": 1.93,
+        "severidad_confianza": 0.9,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": false
+      },
+      {
+        "clausula": "L012",
+        "texto": "Los titulares de datos personales tratados por LOGISTRAL S.A.S. tienen los sigui…",
+        "decidido": "obligacion",
+        "confianza": 0.73,
+        "severidad": 1.2,
+        "severidad_confianza": 0.31,
+        "nivel_severidad": "informativa_menor",
+        "gate_humano": true
+      },
+      {
+        "clausula": "L013",
+        "texto": "a. Conocer, actualizar y rectificar sus datos personales, frente a datos parcial…",
+        "decidido": "obligacion",
+        "confianza": 0.98,
+        "severidad": 1.84,
+        "severidad_confianza": 0.76,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "L014",
+        "texto": "4. DEBERES EN CALIDAD DE RESPONSABLE DEL TRATAMIENTO LOGISTRAL S.A.S. actúa como…",
+        "decidido": "sin_accion",
+        "confianza": 0.37,
+        "severidad": 1.07,
+        "severidad_confianza": 0.0,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "L015",
+        "texto": "a. Garantizar, a través de los canales de atención establecidos, el pleno y efec…",
+        "decidido": "obligacion",
+        "confianza": 1.0,
+        "severidad": 1.99,
+        "severidad_confianza": 0.98,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": false
+      },
+      {
+        "clausula": "L016",
+        "texto": "LOGISTRAL S.A.S. conservará las autorizaciones otorgadas por los titulares, ya s…",
+        "decidido": "obligacion",
+        "confianza": 0.98,
+        "severidad": 1.95,
+        "severidad_confianza": 0.94,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": false
+      },
+      {
+        "clausula": "L017",
+        "texto": "6. DATOS PERSONALES OBJETO DE TRATAMIENTO En el desarrollo de sus actividades, L…",
+        "decidido": "sin_accion",
+        "confianza": 0.43,
+        "severidad": 1.58,
+        "severidad_confianza": 0.37,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "L018",
+        "texto": "VISITANTES • Dirección IP, tipo de navegador, páginas visitadas, frecuencia de v…",
+        "decidido": "obligacion",
+        "confianza": 0.28,
+        "severidad": 1.72,
+        "severidad_confianza": 0.58,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "L020",
+        "texto": "Gestionar la relación comercial y contractual derivada del suministro, instalaci…",
+        "decidido": "obligacion",
+        "confianza": 0.31,
+        "severidad": 1.75,
+        "severidad_confianza": 0.64,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "L022",
+        "texto": "Contar con información actualizada y suficiente de proveedores y contratistas pa…",
+        "decidido": "sin_accion",
+        "confianza": 0.67,
+        "severidad": 0.97,
+        "severidad_confianza": 0.49,
+        "nivel_severidad": "informativa_menor",
+        "gate_humano": true
+      },
+      {
+        "clausula": "L024",
+        "texto": "Conservar información actualizada de colaboradores para el adecuado desarrollo d…",
+        "decidido": "riesgo",
+        "confianza": 0.7,
+        "severidad": 1.92,
+        "severidad_confianza": 0.9,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "L025",
+        "texto": "Utilizar los registros de marcaje, acceso y/o geolocalización como soporte o evi…",
+        "decidido": "riesgo",
+        "confianza": 0.58,
+        "severidad": 1.63,
+        "severidad_confianza": 0.44,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "L027",
+        "texto": "Identificar las páginas visitadas y su frecuencia, con fines exclusivamente esta…",
+        "decidido": "obligacion",
+        "confianza": 0.62,
+        "severidad": 1.65,
+        "severidad_confianza": 0.46,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "L029",
+        "texto": "La información recolectada al ingreso de las instalaciones de LOGISTRAL S.A.S. (…",
+        "decidido": "obligacion",
+        "confianza": 0.4,
+        "severidad": 1.71,
+        "severidad_confianza": 0.56,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "L030",
+        "texto": "Atender, tramitar y dar respuesta a solicitudes relacionadas con el ejercicio de…",
+        "decidido": "obligacion",
+        "confianza": 0.8,
+        "severidad": 1.79,
+        "severidad_confianza": 0.67,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "L033",
+        "texto": "8. USO DE COOKIES Una cookie es un fichero de pequeño tamaño enviado al disposit…",
+        "decidido": "obligacion",
+        "confianza": 0.44,
+        "severidad": 1.18,
+        "severidad_confianza": 0.58,
+        "nivel_severidad": "informativa_menor",
+        "gate_humano": true
+      },
+      {
+        "clausula": "L035",
+        "texto": "9. ENLACES A SITIOS DE TERCEROS El sitio web de LOGISTRAL S.A.S. puede contener …",
+        "decidido": "sin_accion",
+        "confianza": 0.82,
+        "severidad": 0.95,
+        "severidad_confianza": 0.84,
+        "nivel_severidad": "informativa_menor",
+        "gate_humano": false
+      },
+      {
+        "clausula": "L038",
+        "texto": "CONSULTAS El titular o sus causahabientes podrán consultar la información person…",
+        "decidido": "obligacion",
+        "confianza": 1.0,
+        "severidad": 1.93,
+        "severidad_confianza": 0.91,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": false
+      },
+      {
+        "clausula": "L039",
+        "texto": "Si el reclamo resulta incompleto, se requerirá al interesado dentro de los cinco…",
+        "decidido": "obligacion",
+        "confianza": 0.77,
+        "severidad": 1.93,
+        "severidad_confianza": 0.91,
+        "nivel_severidad": "exigible_sancionable",
+        "gate_humano": true
+      },
+      {
+        "clausula": "L040",
+        "texto": "13. FECHA DE ENTRADA EN VIGENCIA La presente Política de Tratamiento de la Infor…",
+        "decidido": "obligacion",
+        "confianza": 0.53,
+        "severidad": 1.38,
+        "severidad_confianza": 0.34,
+        "nivel_severidad": "informativa_menor",
+        "gate_humano": true
+      },
+      {
+        "clausula": "L041",
+        "texto": "Última fecha de actualización del documento 20 de agosto de 2026.",
+        "decidido": "sin_accion",
+        "confianza": 0.97,
+        "severidad": 0.84,
+        "severidad_confianza": 0.67,
+        "nivel_severidad": "informativa_menor",
+        "gate_humano": true
+      }
+    ],
+    "clausulas_a_revision": [
+      "n000",
+      "n002",
+      "n003",
+      "n008",
+      "n009",
+      "n020",
+      "n024",
+      "n026",
+      "n032",
+      "n033",
+      "n039",
+      "n041",
+      "n053",
+      "n061",
+      "n071",
+      "n082",
+      "n098",
+      "n100",
+      "L001",
+      "L002",
+      "L003",
+      "L009",
+      "L012",
+      "L013",
+      "L014",
+      "L017",
+      "L018",
+      "L020",
+      "L022",
+      "L024",
+      "L025",
+      "L027",
+      "L029",
+      "L030",
+      "L033",
+      "L039",
+      "L040",
+      "L041"
+    ]
+  },
+  "por_fuente": {
+    "logistral-politica-tratamiento-datos": {
+      "n": 26,
+      "evaluacion": {
+        "n": 26,
+        "accuracy_bucket": 0.5769230769230769,
+        "matriz_confusion": {
+          "obligacion": {
+            "obligacion": 9,
+            "riesgo": 0,
+            "sin_accion": 3
+          },
+          "riesgo": {
+            "obligacion": 3,
+            "riesgo": 2,
+            "sin_accion": 2
+          },
+          "sin_accion": {
+            "obligacion": 3,
+            "riesgo": 0,
+            "sin_accion": 4
+          }
+        },
+        "por_clase": {
+          "obligacion": {
+            "tp": 9,
+            "fp": 6,
+            "fn": 3,
+            "precision": 0.6,
+            "recall": 0.75,
+            "f1": 0.6666666666666665,
+            "support": 12
+          },
+          "riesgo": {
+            "tp": 2,
+            "fp": 0,
+            "fn": 5,
+            "precision": 1.0,
+            "recall": 0.2857142857142857,
+            "f1": 0.4444444444444445,
+            "support": 7
+          },
+          "sin_accion": {
+            "tp": 4,
+            "fp": 5,
+            "fn": 3,
+            "precision": 0.4444444444444444,
+            "recall": 0.5714285714285714,
+            "f1": 0.5,
+            "support": 7
+          }
+        },
+        "severidad_accuracy_exacta": 0.5769230769230769,
+        "severidad_mae": 0.46153846153846156,
+        "severidad_dentro_de_1": 0.9615384615384616,
+        "ece_bucket": 0.12653846153846154,
+        "ece_severidad": 0.20615384615384616,
+        "fiabilidad_bucket": [
+          {
+            "lo": 0.0,
+            "hi": 0.2,
+            "n": 0,
+            "avg_confidence": null,
+            "accuracy": null
+          },
+          {
+            "lo": 0.2,
+            "hi": 0.4,
+            "n": 3,
+            "avg_confidence": 0.32,
+            "accuracy": 0.0
+          },
+          {
+            "lo": 0.4,
+            "hi": 0.6,
+            "n": 5,
+            "avg_confidence": 0.476,
+            "accuracy": 0.2
+          },
+          {
+            "lo": 0.6,
+            "hi": 0.8,
+            "n": 7,
+            "avg_confidence": 0.7142857142857143,
+            "accuracy": 0.7142857142857143
+          },
+          {
+            "lo": 0.8,
+            "hi": 1.0,
+            "n": 11,
+            "avg_confidence": 0.9045454545454547,
+            "accuracy": 0.8181818181818182
+          }
+        ],
+        "fiabilidad_severidad": [
+          {
+            "lo": 0.0,
+            "hi": 0.2,
+            "n": 2,
+            "avg_confidence": 0.085,
+            "accuracy": 0.0
+          },
+          {
+            "lo": 0.2,
+            "hi": 0.4,
+            "n": 5,
+            "avg_confidence": 0.348,
+            "accuracy": 0.8
+          },
+          {
+            "lo": 0.4,
+            "hi": 0.6,
+            "n": 6,
+            "avg_confidence": 0.5183333333333333,
+            "accuracy": 0.5
+          },
+          {
+            "lo": 0.6,
+            "hi": 0.8,
+            "n": 5,
+            "avg_confidence": 0.696,
+            "accuracy": 0.2
+          },
+          {
+            "lo": 0.8,
+            "hi": 1.0,
+            "n": 8,
+            "avg_confidence": 0.9175,
+            "accuracy": 0.875
+          }
+        ],
+        "gate": {
+          "n": 26,
+          "umbral": 0.8,
+          "revisadas": 20,
+          "fraccion_revision": 0.7692307692307693,
+          "auto": 6,
+          "accuracy_auto": 0.8333333333333334,
+          "errors_auto": 1
+        }
+      },
+      "curva": [
+        {
+          "umbral": 0.0,
+          "n": 26,
+          "auto": 26,
+          "cobertura": 1.0,
+          "accuracy_auto": 0.5769230769230769,
+          "errores_auto": 11,
+          "ids_errores": [
+            "L003",
+            "L009",
+            "L014",
+            "L017",
+            "L018",
+            "L020",
+            "L027",
+            "L029",
+            "L033",
+            "L035",
+            "L040"
+          ]
+        },
+        {
+          "umbral": 0.5,
+          "n": 26,
+          "auto": 20,
+          "cobertura": 0.7692307692307693,
+          "accuracy_auto": 0.75,
+          "errores_auto": 5,
+          "ids_errores": [
+            "L003",
+            "L009",
+            "L027",
+            "L035",
+            "L040"
+          ]
+        },
+        {
+          "umbral": 0.6,
+          "n": 26,
+          "auto": 18,
+          "cobertura": 0.6923076923076923,
+          "accuracy_auto": 0.7777777777777778,
+          "errores_auto": 4,
+          "ids_errores": [
+            "L003",
+            "L009",
+            "L027",
+            "L035"
+          ]
+        },
+        {
+          "umbral": 0.7,
+          "n": 26,
+          "auto": 16,
+          "cobertura": 0.6153846153846154,
+          "accuracy_auto": 0.8125,
+          "errores_auto": 3,
+          "ids_errores": [
+            "L003",
+            "L009",
+            "L035"
+          ]
+        },
+        {
+          "umbral": 0.75,
+          "n": 26,
+          "auto": 13,
+          "cobertura": 0.5,
+          "accuracy_auto": 0.8461538461538461,
+          "errores_auto": 2,
+          "ids_errores": [
+            "L009",
+            "L035"
+          ]
+        },
+        {
+          "umbral": 0.8,
+          "n": 26,
+          "auto": 11,
+          "cobertura": 0.4230769230769231,
+          "accuracy_auto": 0.8181818181818182,
+          "errores_auto": 2,
+          "ids_errores": [
+            "L009",
+            "L035"
+          ]
+        },
+        {
+          "umbral": 0.85,
+          "n": 26,
+          "auto": 7,
+          "cobertura": 0.2692307692307692,
+          "accuracy_auto": 1.0,
+          "errores_auto": 0,
+          "ids_errores": []
+        },
+        {
+          "umbral": 0.9,
+          "n": 26,
+          "auto": 5,
+          "cobertura": 0.19230769230769232,
+          "accuracy_auto": 1.0,
+          "errores_auto": 0,
+          "ids_errores": []
+        },
+        {
+          "umbral": 0.95,
+          "n": 26,
+          "auto": 5,
+          "cobertura": 0.19230769230769232,
+          "accuracy_auto": 1.0,
+          "errores_auto": 0,
+          "ids_errores": []
+        },
+        {
+          "umbral": 1.0,
+          "n": 26,
+          "auto": 2,
+          "cobertura": 0.07692307692307693,
+          "accuracy_auto": 1.0,
+          "errores_auto": 0,
+          "ids_errores": []
+        }
+      ],
+      "punto_recomendado": {
+        "umbral": 0.85,
+        "n": 26,
+        "auto": 7,
+        "cobertura": 0.2692307692307692,
+        "accuracy_auto": 1.0,
+        "errores_auto": 0,
+        "ids_errores": []
+      }
+    },
+    "nequi-politica-tratamiento-datos": {
+      "n": 26,
+      "evaluacion": {
+        "n": 26,
+        "accuracy_bucket": 0.8461538461538461,
+        "matriz_confusion": {
+          "obligacion": {
+            "obligacion": 13,
+            "riesgo": 0,
+            "sin_accion": 3
+          },
+          "riesgo": {
+            "obligacion": 1,
+            "riesgo": 3,
+            "sin_accion": 0
+          },
+          "sin_accion": {
+            "obligacion": 0,
+            "riesgo": 0,
+            "sin_accion": 6
+          }
+        },
+        "por_clase": {
+          "obligacion": {
+            "tp": 13,
+            "fp": 1,
+            "fn": 3,
+            "precision": 0.9285714285714286,
+            "recall": 0.8125,
+            "f1": 0.8666666666666666,
+            "support": 16
+          },
+          "riesgo": {
+            "tp": 3,
+            "fp": 0,
+            "fn": 1,
+            "precision": 1.0,
+            "recall": 0.75,
+            "f1": 0.8571428571428571,
+            "support": 4
+          },
+          "sin_accion": {
+            "tp": 6,
+            "fp": 3,
+            "fn": 0,
+            "precision": 0.6666666666666666,
+            "recall": 1.0,
+            "f1": 0.8,
+            "support": 6
+          }
+        },
+        "severidad_accuracy_exacta": 0.6153846153846154,
+        "severidad_mae": 0.38461538461538464,
+        "severidad_dentro_de_1": 1.0,
+        "ece_bucket": 0.013076923076923166,
+        "ece_severidad": 0.23269230769230764,
+        "fiabilidad_bucket": [
+          {
+            "lo": 0.0,
+            "hi": 0.2,
+            "n": 0,
+            "avg_confidence": null,
+            "accuracy": null
+          },
+          {
+            "lo": 0.2,
+            "hi": 0.4,
+            "n": 0,
+            "avg_confidence": null,
+            "accuracy": null
+          },
+          {
+            "lo": 0.4,
+            "hi": 0.6,
+            "n": 2,
+            "avg_confidence": 0.48,
+            "accuracy": 0.5
+          },
+          {
+            "lo": 0.6,
+            "hi": 0.8,
+            "n": 6,
+            "avg_confidence": 0.7083333333333334,
+            "accuracy": 0.6666666666666666
+          },
+          {
+            "lo": 0.8,
+            "hi": 1.0,
+            "n": 18,
+            "avg_confidence": 0.9472222222222223,
+            "accuracy": 0.9444444444444444
+          }
+        ],
+        "fiabilidad_severidad": [
+          {
+            "lo": 0.0,
+            "hi": 0.2,
+            "n": 0,
+            "avg_confidence": null,
+            "accuracy": null
+          },
+          {
+            "lo": 0.2,
+            "hi": 0.4,
+            "n": 5,
+            "avg_confidence": 0.28800000000000003,
+            "accuracy": 0.6
+          },
+          {
+            "lo": 0.4,
+            "hi": 0.6,
+            "n": 3,
+            "avg_confidence": 0.49,
+            "accuracy": 0.3333333333333333
+          },
+          {
+            "lo": 0.6,
+            "hi": 0.8,
+            "n": 9,
+            "avg_confidence": 0.6733333333333333,
+            "accuracy": 0.3333333333333333
+          },
+          {
+            "lo": 0.8,
+            "hi": 1.0,
+            "n": 9,
+            "avg_confidence": 0.8933333333333334,
+            "accuracy": 1.0
+          }
+        ],
+        "gate": {
+          "n": 26,
+          "umbral": 0.8,
+          "revisadas": 18,
+          "fraccion_revision": 0.6923076923076923,
+          "auto": 8,
+          "accuracy_auto": 1.0,
+          "errors_auto": 0
+        }
+      },
+      "curva": [
+        {
+          "umbral": 0.0,
+          "n": 26,
+          "auto": 26,
+          "cobertura": 1.0,
+          "accuracy_auto": 0.8461538461538461,
+          "errores_auto": 4,
+          "ids_errores": [
+            "n008",
+            "n009",
+            "n026",
+            "n061"
+          ]
+        },
+        {
+          "umbral": 0.5,
+          "n": 26,
+          "auto": 24,
+          "cobertura": 0.9230769230769231,
+          "accuracy_auto": 0.875,
+          "errores_auto": 3,
+          "ids_errores": [
+            "n008",
+            "n009",
+            "n026"
+          ]
+        },
+        {
+          "umbral": 0.6,
+          "n": 26,
+          "auto": 24,
+          "cobertura": 0.9230769230769231,
+          "accuracy_auto": 0.875,
+          "errores_auto": 3,
+          "ids_errores": [
+            "n008",
+            "n009",
+            "n026"
+          ]
+        },
+        {
+          "umbral": 0.7,
+          "n": 26,
+          "auto": 22,
+          "cobertura": 0.8461538461538461,
+          "accuracy_auto": 0.9545454545454546,
+          "errores_auto": 1,
+          "ids_errores": [
+            "n009"
+          ]
+        },
+        {
+          "umbral": 0.75,
+          "n": 26,
+          "auto": 20,
+          "cobertura": 0.7692307692307693,
+          "accuracy_auto": 0.95,
+          "errores_auto": 1,
+          "ids_errores": [
+            "n009"
+          ]
+        },
+        {
+          "umbral": 0.8,
+          "n": 26,
+          "auto": 18,
+          "cobertura": 0.6923076923076923,
+          "accuracy_auto": 0.9444444444444444,
+          "errores_auto": 1,
+          "ids_errores": [
+            "n009"
+          ]
+        },
+        {
+          "umbral": 0.85,
+          "n": 26,
+          "auto": 18,
+          "cobertura": 0.6923076923076923,
+          "accuracy_auto": 0.9444444444444444,
+          "errores_auto": 1,
+          "ids_errores": [
+            "n009"
+          ]
+        },
+        {
+          "umbral": 0.9,
+          "n": 26,
+          "auto": 12,
+          "cobertura": 0.46153846153846156,
+          "accuracy_auto": 1.0,
+          "errores_auto": 0,
+          "ids_errores": []
+        },
+        {
+          "umbral": 0.95,
+          "n": 26,
+          "auto": 11,
+          "cobertura": 0.4230769230769231,
+          "accuracy_auto": 1.0,
+          "errores_auto": 0,
+          "ids_errores": []
+        },
+        {
+          "umbral": 1.0,
+          "n": 26,
+          "auto": 6,
+          "cobertura": 0.23076923076923078,
+          "accuracy_auto": 1.0,
+          "errores_auto": 0,
+          "ids_errores": []
+        }
+      ],
+      "punto_recomendado": {
+        "umbral": 0.9,
+        "n": 26,
+        "auto": 12,
+        "cobertura": 0.46153846153846156,
+        "accuracy_auto": 1.0,
+        "errores_auto": 0,
+        "ids_errores": []
+      }
+    }
+  }
+}

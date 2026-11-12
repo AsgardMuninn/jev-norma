@@ -12,3 +12,4 @@ venv/
 *.log
 bench_ocr_parallel.py
 make_scanned_fixture.py
+wu22/*.pdf

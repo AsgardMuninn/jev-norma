@@ -114,9 +114,10 @@ real, 21,270 tokens in, 963 ms, $0.000893):
   0.73 con 1 error (obligación→sin_accion). La curva, no un umbral dogmático, es el
   producto: el comprador elige el punto de operación.
 
-Limitación declarada: **n=26, un solo anotador, una sola política**. No es ground
-truth legal; es una prueba de conformidad con la rúbrica. Para mover el umbral global
-hace falta un gold set multi-política con segundo anotador.
+Limitación declarada: **un solo anotador**. No es ground truth legal; es una prueba de
+conformidad con la rúbrica. Tras WU22a el gold cubre **dos políticas reales** (52
+cláusulas) y ya permite medir estabilidad cross-documento, pero para mover el umbral
+global sigue haciendo falta el **segundo anotador independiente + κ de Cohen**.
 
 ### Curva cobertura↔accuracy (`--sweep`)
 
@@ -151,6 +152,40 @@ se movió a 1.14 el 14-oct-2026):
 JEV_MODEL=jev-1.14.0 jev-norma politica.pdf --sample 12
 ```
 
+### Estabilidad cross-documento (`--by-source`)
+
+Una accuracy global esconde documentos buenos y documentos malos. `--by-source`
+desagrega métricas, matriz de confusión y curva **por documento**, y adjunta el
+`source` a cada fila de la evidencia:
+
+```bash
+cat wu20/gold.jsonl wu22/gold_logistral.jsonl > wu22/gold_multi.jsonl
+python tools/eval_gold.py wu22/gold_multi.jsonl --out wu22/evidence-wu22-multi.json --sweep --by-source
+```
+
+Medido el 2026-11-12 (`jev-1.14.0`, 52 cláusulas de **dos** políticas reales,
+45,108 tokens in, 2,100 ms, $0.001895):
+
+| documento | n | accuracy | ECE bucket | gate@0.8 auto / errores | punto 0-errores |
+|---|---|---|---|---|---|
+| Nequi (fintech, Webflow) | 26 | **0.846** | 0.013 | 8 / 0 | umbral 0.90 (12/26) |
+| Logistral (pyme, PDF) | 26 | **0.577** | 0.127 | 6 / 1 | umbral 0.85 (7/26) |
+| **global** | 52 | **0.712** | 0.068 | 14 / 1 | umbral 0.90 (17/52) |
+
+Hallazgo de producto (el que manda): **el gate todavía NO es estable cross-documento.**
+La caída se concentra en el recall de `riesgo` (0.29 en la pyme vs 0.75 en la fintech)
+y en precisiones de `sin_accion` (0.44): el límite está en la **semántica de la
+rúbrica** (¿una lista de finalidades es deber o información? ¿un aviso de
+videovigilancia es riesgo?) más que en fallos absurdos del modelo. Las confianzas
+acompañan: 9 de las 11 fallas de la pyme quedaron < 0.8; las dos fronterizas son
+`L009` (0.80, retenida igualmente por la confianza de severidad 0.34) y `L035`
+(0.82, deslinde de responsabilidad sobre sitios de terceros), **la única falla que
+se auto-pasa en producción**.
+
+Consecuencia: el punto de operación con **cero errores** existe en las dos políticas
+(0.85 / 0.90) pero con coberturas distintas (0.27 / 0.46) — el comprador fija su
+riesgo, y **el umbral por defecto no se mueve** hasta tener el segundo anotador y κ.
+
 ## Costo medido (API real, 2026-09/10)
 
 | Fuente | Cláusulas | Acierto | Costo | Latencia |
@@ -159,6 +194,7 @@ JEV_MODEL=jev-1.14.0 jev-norma politica.pdf --sample 12
 | Nequi real (WU2) | 12 | 12/12 (1.0) | $0.00022 | 377 ms |
 | Banrep real no-Webflow (WU4/WU5) | 23 | gate fail-open | $0.00019 | 411 ms |
 | Gold set Nequi (WU20) | 26 | 22/26 (0.846) | $0.000893 | 963 ms |
+| Gold set multi-política (WU22a) | 52 | 37/52 (0.712) | $0.001895 | 2,100 ms |
 
 ## Licencia
 
