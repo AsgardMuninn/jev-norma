@@ -19,7 +19,13 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from jev_norma.metrics import evaluate, rows_from_report  # noqa: E402
+from jev_norma.metrics import (  # noqa: E402
+    DEFAULT_SWEEP,
+    coverage_curve,
+    evaluate,
+    recommended_point,
+    rows_from_report,
+)
 from jev_norma.pipeline import CHUNK_SIZE, GATE_UMBRAL, build_report, gate  # noqa: E402
 
 
@@ -33,55 +39,107 @@ def load_gold(path: Path) -> list[dict]:
     return rows
 
 
+def _print_curve(curva: list[dict]) -> None:
+    print("\ncurva cobertura↔accuracy (auto-pase por confianza de `choice`):")
+    print("  umbral  auto  cobertura  accuracy_auto  errores_auto")
+    for p in curva:
+        cob = "n/a" if p["cobertura"] is None else f"{p['cobertura']:.2f}"
+        acc = "n/a" if p["accuracy_auto"] is None else f"{p['accuracy_auto']:.2f}"
+        print(f"  {p['umbral']:<6.2f}  {p['auto']:>3}  {cob:>9}  {acc:>13}  {p['errores_auto']:>12}")
+    rec = recommended_point(curva)
+    if rec:
+        print(f"  punto recomendado (0 errores, máx cobertura): umbral {rec['umbral']:.2f} → "
+              f"auto {rec['auto']}/{rec['n']} ({rec['cobertura']:.2f})")
+    else:
+        print("  punto recomendado: ninguno con 0 errores (no se recomienda automatizar todavía)")
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="Evalúa jev-norma contra un gold set (API real de Jev)")
-    ap.add_argument("gold", help="gold.jsonl etiquetado")
+    ap.add_argument("gold", nargs="?", default=None, help="gold.jsonl etiquetado (modo API real)")
     ap.add_argument("--out", default=None, help="ruta de la evidencia JSON")
     ap.add_argument("--model", default=None, help="modelo a pinear (default: JEV_MODEL o jev-latest)")
+    ap.add_argument("--from-evidence", default=None,
+                    help="recalcula métricas+curva desde una evidencia guardada, SIN llamar a la API")
+    ap.add_argument("--sweep", action="store_true", help="imprime la curva cobertura↔accuracy")
     args = ap.parse_args(argv)
 
-    gold = load_gold(Path(args.gold))
-    sample = {g["id"]: g["text"] for g in gold}
-    gold_by_id = {g["id"]: {"bucket": g["bucket"], "severity": g["severity"]} for g in gold}
+    if args.from_evidence:
+        prev = json.loads(Path(args.from_evidence).read_text(encoding="utf-8"))
+        rows = prev["filas"]
+        ev = evaluate(rows, threshold=GATE_UMBRAL)
+        evidence = {
+            "fecha": datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds"),
+            "origen": "evidence-replay",
+            "replay_de": str(args.from_evidence),
+            "modelo": prev.get("modelo"),
+            "gold": prev.get("gold"),
+            "ejecucion": prev.get("ejecucion"),
+            "evaluacion": ev,
+            "curva": coverage_curve(rows),
+            "punto_recomendado": recommended_point(coverage_curve(rows)),
+            "filas": rows,
+        }
+    else:
+        if not args.gold:
+            ap.error("se requiere `gold.jsonl` o `--from-evidence`")
+        gold = load_gold(Path(args.gold))
+        sample = {g["id"]: g["text"] for g in gold}
+        gold_by_id = {g["id"]: {"bucket": g["bucket"], "severity": g["severity"]} for g in gold}
 
-    prod = gate(sample, model=args.model)
-    report = build_report(sample, prod["answers"], prod["in_tokens"], prod["latencia_ms"],
-                          modelo=prod["modelo"])
-    rows = rows_from_report(report["tabla"], gold_by_id)
-    ev = evaluate(rows, threshold=GATE_UMBRAL)
-
-    evidence = {
-        "fecha": datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds"),
-        "gold": {"ruta": str(args.gold), "n": len(gold),
-                 "fuente": sorted({g.get("source", "?") for g in gold}),
-                 "nota": "etiquetado por un solo anotador con rúbrica documentada; no es ground truth legal"},
-        "modelo": prod["modelo"],
-        "ejecucion": {"chunk_size": CHUNK_SIZE, "in_tokens": prod["in_tokens"],
-                      "out_tokens": prod["out_tokens"], "latencia_ms": prod["latencia_ms"],
-                      "costo_usd_estimado": round(prod["in_tokens"] * 42e-9, 6)},
-        "evaluacion": ev,
-        "filas": rows,
-        "reporte_produccion": report,
-    }
+        prod = gate(sample, model=args.model)
+        report = build_report(sample, prod["answers"], prod["in_tokens"], prod["latencia_ms"],
+                              modelo=prod["modelo"])
+        rows = rows_from_report(report["tabla"], gold_by_id)
+        ev = evaluate(rows, threshold=GATE_UMBRAL)
+        evidence = {
+            "fecha": datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds"),
+            "origen": "api",
+            "gold": {"ruta": str(args.gold), "n": len(gold),
+                     "fuente": sorted({g.get("source", "?") for g in gold}),
+                     "nota": "etiquetado por un solo anotador con rúbrica documentada; no es ground truth legal"},
+            "modelo": prod["modelo"],
+            "ejecucion": {"chunk_size": CHUNK_SIZE, "in_tokens": prod["in_tokens"],
+                          "out_tokens": prod["out_tokens"], "latencia_ms": prod["latencia_ms"],
+                          "costo_usd_estimado": round(prod["in_tokens"] * 42e-9, 6)},
+            "evaluacion": ev,
+            "curva": coverage_curve(rows),
+            "punto_recomendado": recommended_point(coverage_curve(rows)),
+            "filas": rows,
+            "reporte_produccion": report,
+        }
 
     out = json.dumps(evidence, ensure_ascii=False, indent=2)
     if args.out:
         Path(args.out).write_text(out, encoding="utf-8")
 
-    print(f"n={ev['n']}  modelo={prod['modelo']}  tokens={prod['in_tokens']}  "
-          f"latencia={prod['latencia_ms']}ms  costo=${evidence['ejecucion']['costo_usd_estimado']}")
+    ej = evidence.get("ejecucion") or {}
+    modelo = evidence.get("modelo")
+    if isinstance(modelo, list):
+        modelo = ",".join(str(m) for m in modelo)
+    print(f"n={ev['n']}  modelo={modelo}  tokens={ej.get('in_tokens')}  "
+          f"latencia={ej.get('latencia_ms')}ms  costo=${ej.get('costo_usd_estimado')}")
     print(f"accuracy bucket = {ev['accuracy_bucket']:.3f}")
     for label, m in ev["por_clase"].items():
         prec = "n/a" if m["precision"] is None else f"{m['precision']:.2f}"
         rec = "n/a" if m["recall"] is None else f"{m['recall']:.2f}"
         print(f"  {label:<11} support={m['support']:<2} precision={prec} recall={rec}")
-    print(f"severidad: exacta={ev['severidad_accuracy_exacta']:.3f}  MAE={ev['severidad_mae']:.2f}  "
-          f"dentro_de_1={ev['severidad_dentro_de_1']:.3f}")
-    print(f"ECE bucket={ev['ece_bucket']:.3f}  ECE severidad={ev['ece_severidad']:.3f}")
+    sev = ev["severidad_accuracy_exacta"]
+    mae = ev["severidad_mae"]
+    dentro = ev["severidad_dentro_de_1"]
+    if sev is not None:
+        print(f"severidad: exacta={sev:.3f}  MAE={mae:.2f}  dentro_de_1={dentro:.3f}")
+    ece_b = ev["ece_bucket"]
+    ece_s = ev["ece_severidad"]
+    fmt = lambda v: "n/a" if v is None else f"{v:.3f}"  # noqa: E731
+    print(f"ECE bucket={fmt(ece_b)}  ECE severidad={fmt(ece_s)}")
     g = ev["gate"]
     auto = "n/a" if g["accuracy_auto"] is None else f"{g['accuracy_auto']:.2f}"
-    print(f"gate@{g['umbral']}: auto={g['auto']}/{g['n']} (cobertura {1 - g['fraccion_revision']:.2f})  "
+    cob = "n/a" if g["fraccion_revision"] is None else f"{1 - g['fraccion_revision']:.2f}"
+    print(f"gate@{g['umbral']}: auto={g['auto']}/{g['n']} (cobertura {cob})  "
           f"accuracy_auto={auto}  errores_auto={g['errors_auto']}")
+    if args.sweep:
+        _print_curve(evidence["curva"])
     if args.out:
         print(f"(evidencia en {args.out})")
     return 0

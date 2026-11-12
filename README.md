@@ -118,6 +118,32 @@ Limitación declarada: **n=26, un solo anotador, una sola política**. No es gro
 truth legal; es una prueba de conformidad con la rúbrica. Para mover el umbral global
 hace falta un gold set multi-política con segundo anotador.
 
+### Curva cobertura↔accuracy (`--sweep`)
+
+El umbral no se debate en abstracto: el arnés barre umbrales sobre la confianza de
+`choice` y expone el precio de cada punto de operación. Funciona sobre una evidencia
+guardada, **sin volver a llamar a la API** (reproducible por el comprador):
+
+```bash
+python tools/eval_gold.py --from-evidence wu21/evidence-wu21-sweep.json --sweep
+```
+
+Medido sobre el gold set Nequi (26 cláusulas, `jev-1.14.0`):
+
+| umbral | auto | cobertura | accuracy_auto | errores_auto |
+|---|---|---|---|---|
+| 0.80 | 19/26 | 0.73 | 0.95 | 1 |
+| 0.90 | 14/26 | 0.54 | 0.93 | 1 |
+| **0.95** | **11/26** | **0.42** | **1.00** | **0** |
+| 1.00 | 6/26 | 0.23 | 1.00 | 0 |
+
+Dos lecturas de producto: (1) el gate de producción acopla la confianza del eje
+severidad y por eso rinde 0.27 de cobertura; desacoplarlo (severidad solo prioriza, no
+manda a humano) sube a **0.42 con cero errores**; (2) el umbral 0.80 compra +0.31 de
+cobertura pagando 1 error — ese intercambio lo decide el comprador, no el default.
+`recommended_point` devuelve el punto de mayor cobertura con cero errores, y `None`
+si ninguno lo logra (no se inventa recomendación sin evidencia).
+
 Pinnea la versión cuando un umbral dependa de la calibración (el alias `jev-latest`
 se movió a 1.14 el 14-oct-2026):
 

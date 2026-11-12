@@ -17,6 +17,7 @@ from __future__ import annotations
 LABELS = ("obligacion", "riesgo", "sin_accion")
 SEVERITIES = (0, 1, 2)
 SEVERITY_NAMES = ("sin_obligacion", "informativa_menor", "exigible_sancionable")
+DEFAULT_SWEEP = (0.0, 0.5, 0.6, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0)
 
 
 def _div(a: float, b: float):
@@ -124,6 +125,45 @@ def gate_summary(rows: list[dict], threshold: float = 0.8) -> dict:
     }
 
 
+def coverage_curve(rows: list[dict], thresholds=None, conf: str = "confidence") -> list[dict]:
+    """Curva cobertura↔accuracy del auto-pase, barriendo umbrales de confianza.
+
+    A diferencia de `gate_summary`, NO depende de `gate_humano`: recalcula el
+    auto-pase sólo con la confianza del bucket (`choice`). Así el comprador ve el
+    precio de cada punto de operación (cuántas cláusulas se auto-resuelven y con
+    cuántos errores) en vez de heredar un umbral dogmático. PURA: no toca red.
+    """
+    ths = tuple(thresholds) if thresholds is not None else DEFAULT_SWEEP
+    n = len(rows)
+    curve = []
+    for t in ths:
+        th = float(t)
+        auto = [r for r in rows if float(r.get(conf, 0)) >= th]
+        errores = [r for r in auto if r["gold_bucket"] != r["pred_bucket"]]
+        curve.append({
+            "umbral": round(th, 2),
+            "n": n,
+            "auto": len(auto),
+            "cobertura": _div(len(auto), n),
+            "accuracy_auto": _div(len(auto) - len(errores), len(auto)),
+            "errores_auto": len(errores),
+            "ids_errores": [r.get("id") for r in errores],
+        })
+    return curve
+
+
+def recommended_point(curve: list[dict]):
+    """Punto de operación con MÁXIMA cobertura entre los que no auto-resuelven errores.
+
+    None si la curva está vacía o si ningún umbral llega a cero errores (no se
+    inventa recomendación cuando no hay evidencia de que exista un punto seguro).
+    """
+    seguros = [p for p in curve if p["errores_auto"] == 0 and p["auto"] > 0]
+    if not seguros:
+        return None
+    return max(seguros, key=lambda p: (p["cobertura"], -p["umbral"]))
+
+
 def evaluate(rows: list[dict], threshold: float = 0.8, n_bins: int = 5) -> dict:
     """Reporte completo de accuracy/calibración/cobertura sobre filas gold+predicción."""
     sev_rows = [r for r in rows if r.get("pred_severity") is not None and r.get("gold_severity") is not None]
@@ -170,5 +210,6 @@ def rows_from_report(tabla: list[dict], gold_by_id: dict) -> list[dict]:
     return rows
 
 
-__all__ = ["LABELS", "SEVERITIES", "SEVERITY_NAMES", "accuracy", "confusion", "per_class", "severity_mae",
-           "severity_within_one", "reliability", "ece", "gate_summary", "evaluate"]
+__all__ = ["LABELS", "SEVERITIES", "SEVERITY_NAMES", "DEFAULT_SWEEP", "accuracy", "confusion", "per_class",
+           "severity_mae", "severity_within_one", "reliability", "ece", "gate_summary", "coverage_curve",
+           "recommended_point", "evaluate", "rows_from_report"]

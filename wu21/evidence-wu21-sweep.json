@@ -1,0 +1,548 @@
+{
+  "fecha": "2026-11-12T11:04:23-05:00",
+  "origen": "evidence-replay",
+  "replay_de": "wu20/evidence-wu20.json",
+  "modelo": [
+    "jev-1.14.0"
+  ],
+  "gold": {
+    "ruta": "wu20/gold.jsonl",
+    "n": 26,
+    "fuente": [
+      "nequi-politica-tratamiento-datos"
+    ],
+    "nota": "etiquetado por un solo anotador con rúbrica documentada; no es ground truth legal"
+  },
+  "ejecucion": {
+    "chunk_size": 6,
+    "in_tokens": 21270,
+    "out_tokens": 1671,
+    "latencia_ms": 963,
+    "costo_usd_estimado": 0.000893
+  },
+  "evaluacion": {
+    "n": 26,
+    "accuracy_bucket": 0.8461538461538461,
+    "matriz_confusion": {
+      "obligacion": {
+        "obligacion": 13,
+        "riesgo": 0,
+        "sin_accion": 3
+      },
+      "riesgo": {
+        "obligacion": 1,
+        "riesgo": 3,
+        "sin_accion": 0
+      },
+      "sin_accion": {
+        "obligacion": 0,
+        "riesgo": 0,
+        "sin_accion": 6
+      }
+    },
+    "por_clase": {
+      "obligacion": {
+        "tp": 13,
+        "fp": 1,
+        "fn": 3,
+        "precision": 0.9285714285714286,
+        "recall": 0.8125,
+        "f1": 0.8666666666666666,
+        "support": 16
+      },
+      "riesgo": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 1,
+        "precision": 1.0,
+        "recall": 0.75,
+        "f1": 0.8571428571428571,
+        "support": 4
+      },
+      "sin_accion": {
+        "tp": 6,
+        "fp": 3,
+        "fn": 0,
+        "precision": 0.6666666666666666,
+        "recall": 1.0,
+        "f1": 0.8,
+        "support": 6
+      }
+    },
+    "severidad_accuracy_exacta": 0.6153846153846154,
+    "severidad_mae": 0.4230769230769231,
+    "severidad_dentro_de_1": 0.9615384615384616,
+    "ece_bucket": 0.023076923076922905,
+    "ece_severidad": 0.19769230769230767,
+    "fiabilidad_bucket": [
+      {
+        "lo": 0.0,
+        "hi": 0.2,
+        "n": 0,
+        "avg_confidence": null,
+        "accuracy": null
+      },
+      {
+        "lo": 0.2,
+        "hi": 0.4,
+        "n": 0,
+        "avg_confidence": null,
+        "accuracy": null
+      },
+      {
+        "lo": 0.4,
+        "hi": 0.6,
+        "n": 2,
+        "avg_confidence": 0.485,
+        "accuracy": 0.5
+      },
+      {
+        "lo": 0.6,
+        "hi": 0.8,
+        "n": 5,
+        "avg_confidence": 0.696,
+        "accuracy": 0.6
+      },
+      {
+        "lo": 0.8,
+        "hi": 1.0,
+        "n": 19,
+        "avg_confidence": 0.9426315789473686,
+        "accuracy": 0.9473684210526315
+      }
+    ],
+    "fiabilidad_severidad": [
+      {
+        "lo": 0.0,
+        "hi": 0.2,
+        "n": 1,
+        "avg_confidence": 0.1,
+        "accuracy": 0.0
+      },
+      {
+        "lo": 0.2,
+        "hi": 0.4,
+        "n": 5,
+        "avg_confidence": 0.30200000000000005,
+        "accuracy": 0.6
+      },
+      {
+        "lo": 0.4,
+        "hi": 0.6,
+        "n": 3,
+        "avg_confidence": 0.5066666666666667,
+        "accuracy": 0.3333333333333333
+      },
+      {
+        "lo": 0.6,
+        "hi": 0.8,
+        "n": 9,
+        "avg_confidence": 0.6911111111111111,
+        "accuracy": 0.4444444444444444
+      },
+      {
+        "lo": 0.8,
+        "hi": 1.0,
+        "n": 8,
+        "avg_confidence": 0.89875,
+        "accuracy": 1.0
+      }
+    ],
+    "gate": {
+      "n": 26,
+      "umbral": 0.8,
+      "revisadas": 19,
+      "fraccion_revision": 0.7307692307692307,
+      "auto": 7,
+      "accuracy_auto": 1.0,
+      "errors_auto": 0
+    }
+  },
+  "curva": [
+    {
+      "umbral": 0.0,
+      "n": 26,
+      "auto": 26,
+      "cobertura": 1.0,
+      "accuracy_auto": 0.8461538461538461,
+      "errores_auto": 4,
+      "ids_errores": [
+        "n008",
+        "n009",
+        "n026",
+        "n061"
+      ]
+    },
+    {
+      "umbral": 0.5,
+      "n": 26,
+      "auto": 25,
+      "cobertura": 0.9615384615384616,
+      "accuracy_auto": 0.84,
+      "errores_auto": 4,
+      "ids_errores": [
+        "n008",
+        "n009",
+        "n026",
+        "n061"
+      ]
+    },
+    {
+      "umbral": 0.6,
+      "n": 26,
+      "auto": 24,
+      "cobertura": 0.9230769230769231,
+      "accuracy_auto": 0.875,
+      "errores_auto": 3,
+      "ids_errores": [
+        "n008",
+        "n009",
+        "n026"
+      ]
+    },
+    {
+      "umbral": 0.7,
+      "n": 26,
+      "auto": 22,
+      "cobertura": 0.8461538461538461,
+      "accuracy_auto": 0.9545454545454546,
+      "errores_auto": 1,
+      "ids_errores": [
+        "n009"
+      ]
+    },
+    {
+      "umbral": 0.75,
+      "n": 26,
+      "auto": 20,
+      "cobertura": 0.7692307692307693,
+      "accuracy_auto": 0.95,
+      "errores_auto": 1,
+      "ids_errores": [
+        "n009"
+      ]
+    },
+    {
+      "umbral": 0.8,
+      "n": 26,
+      "auto": 19,
+      "cobertura": 0.7307692307692307,
+      "accuracy_auto": 0.9473684210526315,
+      "errores_auto": 1,
+      "ids_errores": [
+        "n009"
+      ]
+    },
+    {
+      "umbral": 0.85,
+      "n": 26,
+      "auto": 18,
+      "cobertura": 0.6923076923076923,
+      "accuracy_auto": 0.9444444444444444,
+      "errores_auto": 1,
+      "ids_errores": [
+        "n009"
+      ]
+    },
+    {
+      "umbral": 0.9,
+      "n": 26,
+      "auto": 14,
+      "cobertura": 0.5384615384615384,
+      "accuracy_auto": 0.9285714285714286,
+      "errores_auto": 1,
+      "ids_errores": [
+        "n009"
+      ]
+    },
+    {
+      "umbral": 0.95,
+      "n": 26,
+      "auto": 11,
+      "cobertura": 0.4230769230769231,
+      "accuracy_auto": 1.0,
+      "errores_auto": 0,
+      "ids_errores": []
+    },
+    {
+      "umbral": 1.0,
+      "n": 26,
+      "auto": 6,
+      "cobertura": 0.23076923076923078,
+      "accuracy_auto": 1.0,
+      "errores_auto": 0,
+      "ids_errores": []
+    }
+  ],
+  "punto_recomendado": {
+    "umbral": 0.95,
+    "n": 26,
+    "auto": 11,
+    "cobertura": 0.4230769230769231,
+    "accuracy_auto": 1.0,
+    "errores_auto": 0,
+    "ids_errores": []
+  },
+  "filas": [
+    {
+      "id": "n000",
+      "gold_bucket": "sin_accion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 0,
+      "pred_severity": 1,
+      "confidence": 1.0,
+      "severity_confidence": 0.53,
+      "gate_humano": true
+    },
+    {
+      "id": "n002",
+      "gold_bucket": "sin_accion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 0,
+      "pred_severity": 2,
+      "confidence": 0.8,
+      "severity_confidence": 0.1,
+      "gate_humano": true
+    },
+    {
+      "id": "n003",
+      "gold_bucket": "sin_accion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 0,
+      "pred_severity": 1,
+      "confidence": 1.0,
+      "severity_confidence": 0.6,
+      "gate_humano": true
+    },
+    {
+      "id": "n008",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 1,
+      "pred_severity": 2,
+      "confidence": 0.62,
+      "severity_confidence": 0.66,
+      "gate_humano": true
+    },
+    {
+      "id": "n009",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 1,
+      "pred_severity": 1,
+      "confidence": 0.91,
+      "severity_confidence": 0.24,
+      "gate_humano": true
+    },
+    {
+      "id": "n010",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 1.0,
+      "severity_confidence": 0.82,
+      "gate_humano": false
+    },
+    {
+      "id": "n019",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 1.0,
+      "severity_confidence": 0.96,
+      "gate_humano": false
+    },
+    {
+      "id": "n020",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 1,
+      "pred_severity": 2,
+      "confidence": 0.72,
+      "severity_confidence": 0.78,
+      "gate_humano": true
+    },
+    {
+      "id": "n024",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.98,
+      "severity_confidence": 0.64,
+      "gate_humano": true
+    },
+    {
+      "id": "n026",
+      "gold_bucket": "riesgo",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.62,
+      "severity_confidence": 0.9,
+      "gate_humano": true
+    },
+    {
+      "id": "n029",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.98,
+      "severity_confidence": 0.96,
+      "gate_humano": false
+    },
+    {
+      "id": "n032",
+      "gold_bucket": "sin_accion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 1,
+      "pred_severity": 2,
+      "confidence": 0.88,
+      "severity_confidence": 0.37,
+      "gate_humano": true
+    },
+    {
+      "id": "n033",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 1,
+      "pred_severity": 1,
+      "confidence": 0.44,
+      "severity_confidence": 0.28,
+      "gate_humano": true
+    },
+    {
+      "id": "n039",
+      "gold_bucket": "riesgo",
+      "pred_bucket": "riesgo",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.86,
+      "severity_confidence": 0.66,
+      "gate_humano": true
+    },
+    {
+      "id": "n041",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 1,
+      "pred_severity": 1,
+      "confidence": 0.88,
+      "severity_confidence": 0.25,
+      "gate_humano": true
+    },
+    {
+      "id": "n053",
+      "gold_bucket": "riesgo",
+      "pred_bucket": "riesgo",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.86,
+      "severity_confidence": 0.46,
+      "gate_humano": true
+    },
+    {
+      "id": "n059",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.98,
+      "severity_confidence": 0.91,
+      "gate_humano": false
+    },
+    {
+      "id": "n061",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 1,
+      "pred_severity": 2,
+      "confidence": 0.53,
+      "severity_confidence": 0.73,
+      "gate_humano": true
+    },
+    {
+      "id": "n063",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.97,
+      "severity_confidence": 0.79,
+      "gate_humano": true
+    },
+    {
+      "id": "n065",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 1.0,
+      "severity_confidence": 0.94,
+      "gate_humano": false
+    },
+    {
+      "id": "n071",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.92,
+      "severity_confidence": 0.68,
+      "gate_humano": true
+    },
+    {
+      "id": "n079",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.97,
+      "severity_confidence": 0.82,
+      "gate_humano": false
+    },
+    {
+      "id": "n082",
+      "gold_bucket": "sin_accion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 1,
+      "pred_severity": 2,
+      "confidence": 0.73,
+      "severity_confidence": 0.37,
+      "gate_humano": true
+    },
+    {
+      "id": "n090",
+      "gold_bucket": "obligacion",
+      "pred_bucket": "obligacion",
+      "gold_severity": 2,
+      "pred_severity": 2,
+      "confidence": 0.92,
+      "severity_confidence": 0.88,
+      "gate_humano": false
+    },
+    {
+      "id": "n098",
+      "gold_bucket": "riesgo",
+      "pred_bucket": "riesgo",
+      "gold_severity": 2,
+      "pred_severity": 1,
+      "confidence": 0.79,
+      "severity_confidence": 0.53,
+      "gate_humano": true
+    },
+    {
+      "id": "n100",
+      "gold_bucket": "sin_accion",
+      "pred_bucket": "sin_accion",
+      "gold_severity": 0,
+      "pred_severity": 1,
+      "confidence": 1.0,
+      "severity_confidence": 0.68,
+      "gate_humano": true
+    }
+  ]
+}
