@@ -186,6 +186,30 @@ Consecuencia: el punto de operación con **cero errores** existe en las dos pol�
 (0.85 / 0.90) pero con coberturas distintas (0.27 / 0.46) — el comprador fija su
 riesgo, y **el umbral por defecto no se mueve** hasta tener el segundo anotador y κ.
 
+### Acuerdo inter-anotador (κ de Cohen, WU22b)
+
+Un solo anotador no demuestra que la rúbrica sea reproducible. El paquete ciego separa
+el texto de la etiqueta para que una segunda persona etiquete las mismas 52 cláusulas
+sin ver el gold ni las predicciones del modelo:
+
+```bash
+python tools/annotate_packet.py wu22/gold_multi.jsonl \
+    --out wu22b/packet_blind.jsonl --guide wu22b/GUIA-ANOTACION.md
+python tools/kappa_report.py wu22/gold_multi.jsonl wu22b/respuestas_anotador2.jsonl \
+    --out wu22b/evidence-wu22b-kappa.json
+```
+
+El paquete sale en dos formatos equivalentes: `packet_blind.csv` (para anotar en
+Excel/Sheets, columnas `bucket` y `severity` vacías) y `packet_blind.jsonl`. Sólo lleva
+`id`, `source` y `text` (lista blanca en `jev_norma.packet`); el reporte une por `id`,
+lista los ids faltantes y calcula κ global y por documento, matriz de acuerdo y, si
+ambos lados traen `severity`, acuerdo de severidad. κ es `None` cuando es indefinido
+(sin ids comunes o acuerdo esperado = 1): no se inventa un número. Criterio
+pre-registrado: **κ >= 0.6** para considerar la rúbrica reproducible; por debajo, el
+umbral de producción no se mueve. Sanidad verificada con gold contra gold (κ = 1.000,
+52/52, ver `wu22b/evidence-wu22b-sanity.json`); el κ real queda pendiente del segundo
+anotador humano.
+
 ## Costo medido (API real, 2026-09/10)
 
 | Fuente | Cláusulas | Acierto | Costo | Latencia |

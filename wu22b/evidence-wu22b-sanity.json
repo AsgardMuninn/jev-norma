@@ -1,0 +1,83 @@
+{
+  "fecha": "2026-11-12T11:20:52-05:00",
+  "gold": "wu22/gold_multi.jsonl",
+  "anotador": "wu22/gold_multi.jsonl",
+  "n_a": 52,
+  "n_b": 52,
+  "n_comun": 52,
+  "solo_a": [],
+  "solo_b": [],
+  "kappa": 1.0,
+  "umbral": 0.6,
+  "veredicto": "fiable",
+  "acuerdo_observado": 1.0,
+  "matriz": {
+    "obligacion": {
+      "obligacion": 28,
+      "riesgo": 0,
+      "sin_accion": 0
+    },
+    "riesgo": {
+      "obligacion": 0,
+      "riesgo": 11,
+      "sin_accion": 0
+    },
+    "sin_accion": {
+      "obligacion": 0,
+      "riesgo": 0,
+      "sin_accion": 13
+    }
+  },
+  "por_fuente": {
+    "logistral-politica-tratamiento-datos": {
+      "n": 26,
+      "kappa": 1.0,
+      "acuerdo_observado": 1.0,
+      "matriz": {
+        "obligacion": {
+          "obligacion": 12,
+          "riesgo": 0,
+          "sin_accion": 0
+        },
+        "riesgo": {
+          "obligacion": 0,
+          "riesgo": 7,
+          "sin_accion": 0
+        },
+        "sin_accion": {
+          "obligacion": 0,
+          "riesgo": 0,
+          "sin_accion": 7
+        }
+      }
+    },
+    "nequi-politica-tratamiento-datos": {
+      "n": 26,
+      "kappa": 1.0,
+      "acuerdo_observado": 1.0,
+      "matriz": {
+        "obligacion": {
+          "obligacion": 16,
+          "riesgo": 0,
+          "sin_accion": 0
+        },
+        "riesgo": {
+          "obligacion": 0,
+          "riesgo": 4,
+          "sin_accion": 0
+        },
+        "sin_accion": {
+          "obligacion": 0,
+          "riesgo": 0,
+          "sin_accion": 6
+        }
+      }
+    }
+  },
+  "severidad": {
+    "n": 52,
+    "exacta": 1.0,
+    "mae": 0.0,
+    "dentro_de_1": 1.0
+  }
+}
