@@ -1,0 +1,47 @@
+{
+  "wu": "WU22b-fix",
+  "producto": "jev-norma",
+  "fecha": "2026-11-13",
+  "pregunta": "WU22a midió 8/42 'cláusulas' que eran sólo el número de sección del PDF (1., 2.4., 7.2.). ¿Se descartan en el normalizador 0-IA sin perder texto legal?",
+  "respuesta": "SÍ: 8 -> 0 fragmentos, 0 cláusulas con texto nuevo, sin llamadas a la API.",
+  "pdf": "wu22/logistral_politica.pdf",
+  "gold_pre_registrado": "wu22/clauses_logistral.json",
+  "antes": {
+    "clausulas": 42,
+    "fragmentos_numeracion": 8,
+    "fragmentos": [
+      "1.",
+      "2.4.",
+      "3.",
+      "7.2.",
+      "7.3.",
+      "7.4.",
+      "7.5.",
+      "11."
+    ]
+  },
+  "despues": {
+    "clausulas": 38,
+    "fragmentos_numeracion": 0,
+    "stats": {
+      "latencia_ms": 5,
+      "n_parrafos": 41,
+      "n_clauses_final": 38
+    },
+    "clausulas_sha256": "d2e27a2942fb368a740c5c095fd255818f22c4394eebdd3396b977f117fe3403"
+  },
+  "checks": {
+    "cero_fragmentos_numeracion": true,
+    "ninguna_clausula_con_texto_nuevo": true,
+    "mas_clausulas_que_antes_menos_fragmentos": true,
+    "regresion_html_banrep_intacta": true,
+    "api_calls": 0
+  },
+  "delta_clausulas": {
+    "explicacion": "42 - 8 fragmentos sueltos = 34; +4 cortes nuevos donde la numeración estaba pegada a mitad de párrafo y antes se fusionaba con la cláusula siguiente (la numeración ahora cierra la cláusula en curso, no se emite).",
+    "formula": "42 - 8 + 4 = 38"
+  },
+  "no_afecta_medicion": "gold/eval/κ unen por id de gold (L###/n###), no por índice del normalizador; el paquete ciego y el gold quedan válidos sin re-etiquetar.",
+  "suite": "78/78 pytest (+2) + selftests CLI 12/12 y MCP 13/13",
+  "checks_ok": true
+}

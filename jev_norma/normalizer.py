@@ -55,6 +55,23 @@ _SENT_SPLIT = re.compile(r"(?<=[.;])\s+(?=[A-ZÁÉÍÓÚÑ0-9¿¡\"'«])")
 # Sin anclas: se eliminan también cuando el extractor las incrusta a mitad de párrafo.
 PAGE_HEADER_PAT = re.compile(r"\bp[aá]gina\s+\d+\s*(?:de|sl\.?|/)\s*\d*\b", re.IGNORECASE)
 
+# WU22b-fix: el extractor PDF deja la NUMERACIÓN sola como "cláusula" ("1.", "2.4.", "7.2.").
+# WU22a midió 8 de 42 en la política Logistral: se pagaban tokens al gate por nada y ensuciaban
+# el reporte. No es contenido legal: es un boundary de sección (cierra la cláusula en curso).
+NUMERACION_PAT = re.compile(r"^\(?\d{1,3}(?:[.)]\d{1,3})*[.)]?\)?$")
+NUMERACION_MAX_CHARS = 15
+
+
+def is_numbering_fragment(txt: str) -> bool:
+    """True si el texto es SOLO un número de enumeración/binario ("1.", "2.4.", "3)", "(7.2)").
+
+    Exige que no haya ninguna letra: "Artículo 5." o "Ley 1581 de 2012" son cláusulas reales.
+    """
+    s = txt.strip()
+    if not s or len(s) > NUMERACION_MAX_CHARS or any(c.isalpha() for c in s):
+        return False
+    return bool(NUMERACION_PAT.match(s))
+
 
 def _strip_html(txt: str) -> str:
     txt = re.sub(r"<[^>]+>", " ", txt)
@@ -185,7 +202,7 @@ def segment_plain_text(text: str, max_chars: int = MAX_CLAUSE_CHARS) -> dict:
                 continue
             if BOILERPLATE_PAT.match(raw_s) or (len(raw_s) <= CONTACT_MAX_CHARS and CONTACT_ANYWHERE.search(raw_s)):
                 continue
-            if looks_like_header(raw_s):
+            if looks_like_header(raw_s) or is_numbering_fragment(raw_s):
                 if buf:
                     clauses.append(buf)
                     buf = ""

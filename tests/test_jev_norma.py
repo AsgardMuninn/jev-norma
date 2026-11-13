@@ -99,6 +99,37 @@ def test_segment_plain_text_drops_pagination_headers():
     assert r["stats"]["n_clauses_final"] == 2
 
 
+def test_segment_plain_text_drops_numbering_fragments():
+    # WU22b-fix: el extractor PDF deja la numeración sola como "cláusula" ("1.", "2.4.",
+    # "7.2."). WU22a midió 8 de 42 en la política Logistral: se pagaban tokens al gate por
+    # nada y ensuciaban el reporte. Es un BOUNDARY de sección, no contenido.
+    tx = ("1.\n\n"
+          "La sociedad tratará los datos conforme a la Ley 1581 y el Decreto 1377.\n\n"
+          "2.4.\n\n"
+          "Se solicitará la autorización previa, expresa e informada del titular.\n\n"
+          "7.2.\n"
+          "Se conservará la prueba de dichas autorizaciones.")
+    r = segment_plain_text(tx)
+    tops = [c.strip() for c in r["clauses"]]
+    assert not any(t in ("1.", "2.4.", "7.2.") for t in tops)
+    assert len(tops) == 3
+    assert tops[0].startswith("La sociedad tratará")
+    assert tops[1].startswith("Se solicitará")
+    assert tops[2].startswith("Se conservará")
+    assert r["stats"]["n_clauses_final"] == 3
+
+
+def test_numbering_fragment_keeps_legal_numbers_with_text():
+    # Guarda contra falsos positivos: números CON texto legal siguen siendo cláusulas.
+    tx = ("Artículo 5. La sociedad tratará los datos conforme a la Ley 1581 de 2012.\n\n"
+          "Se conservará constancia de las autorizaciones por 2024.")
+    r = segment_plain_text(tx)
+    joined = " ".join(r["clauses"])
+    assert "Artículo 5." in joined
+    assert "Ley 1581 de 2012" in joined
+    assert "por 2024." in joined
+
+
 def test_build_questions_self_contained():
     qs = build_questions({"a": "El responsable conservará la prueba de la autorización."})
     instr = qs["a"]["instructions"]
