@@ -1,0 +1,68 @@
+{
+  "wu": "WU22b-fix2",
+  "producto": "jev-norma",
+  "fecha": "2026-11-14",
+  "pregunta": "El sufijo de numeración pegado al final de una cláusula ('...siguientes finalidades: 7.1.') sigue viajando al gate. ¿Se recorta sin perder texto legal, sin fusionar ni romper cláusulas?",
+  "respuesta": "SÍ: 1 -> 0 sufijos en el PDF de Logistral, mismo número de cláusulas, cada cláusula nueva es prefijo exacto de la vieja y lo removido es sólo el marcador; referencias legales ('artículo 6.', 'numeral 4.2.') y fechas quedan intactas.",
+  "pdf": "wu22/logistral_politica.pdf",
+  "antes": {
+    "clausulas": 38,
+    "sufijos_numeracion": 1,
+    "sufijos": [
+      "L S.A.S. serán tratados con las siguientes finalidades: 7.1."
+    ]
+  },
+  "despues": {
+    "clausulas": 38,
+    "sufijos_numeracion": 0,
+    "clausulas_sha256": "9ec1dffb03683ed4f86705c31ec7df06e5162d3f6724662deca7c9fdb0583186"
+  },
+  "removido": {
+    "tokens": [
+      " 7.1."
+    ],
+    "n": 1
+  },
+  "checks": {
+    "sufijo_existia_antes": true,
+    "cero_sufijos_despues": true,
+    "mismo_numero_de_clausulas": true,
+    "solo_se_removio_el_marcador": true,
+    "regresion_html_banrep_intacta": true,
+    "api_calls": 0
+  },
+  "referencias_legales_intactas": {
+    "pruebas_en_suite": [
+      "test_trailing_number_is_kept_when_it_is_legal_content",
+      "test_segment_plain_text_strips_trailing_section_number"
+    ],
+    "guardas": [
+      "artículo/numeral/literal/ítem/punto/sección/capítulo/anexo/ley/decreto/resolución/circular/ordinal/parágrafo/cláusula/inciso/libro/título/página",
+      "fechas y años de 4 dígitos (2024., 2026.) no son marcadores de 1-2 dígitos"
+    ]
+  },
+  "paquete_ciego_intacto": {
+    "archivo": "wu22b/packet_blind.jsonl",
+    "sha256": "fd5f636894861b345cfb358e7001dfd3f72221374444bec580f3c00b75b19c9a",
+    "clausulas_con_sufijo_en_el_paquete_congelado": [
+      "L001",
+      "L017",
+      "L029",
+      "L030"
+    ],
+    "nota": "el paquete se generó con el normalizador de WU22a y NO se regenera: κ y gold unen por id, y quitar '7.1.'/'7.6.' del final no cambia bucket ni severity en la rúbrica v1 (misma decisión, menos ruido)."
+  },
+  "hallazgo_abierto": {
+    "id": "WU22b-fix3 (candidato teórico, NO ejecutado en este work unit)",
+    "defecto": "looks_like_header() marca como 'cabecera' cualquier fragmento <= 70 chars que EMPIECE con autori/finalidad/princi/... sin mirar el caso: una oración de contenido como 'Autorización del titular para el tratamiento de sus datos personales.' (70 chars) se descarta.",
+    "medido_en_este_documento": {
+      "descartadas": 14,
+      "mayusculas_reales": 14,
+      "sospechosas_minusculas": []
+    },
+    "estado": "riesgo TEÓRICO en Logistral: las 14 descartadas son cabeceras reales en mayúsculas; la pérdida necesita un documento con oraciones cortas en minúsculas que empiecen con esas raíces",
+    "como_verificar": "correr el mismo conteo sobre HTML de Nequi + 3 documentos más y exigir 0 descartes con ratio de mayúsculas < 0.6"
+  },
+  "costo_usd": 0.0,
+  "checks_ok": true
+}

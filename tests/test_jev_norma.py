@@ -130,6 +130,33 @@ def test_numbering_fragment_keeps_legal_numbers_with_text():
     assert "por 2024." in joined
 
 
+def test_segment_plain_text_strips_trailing_section_number():
+    # WU22b-fix2: cuando la numeración va PEGADA al final de un párrafo
+    # ("...siguientes finalidades: 7.1. Autorización..."), el token queda como sufijo de la
+    # cláusula y viaja al gate como ruido. Es un marcador de sección, no contenido.
+    tx = ("Los datos serán tratados con las siguientes finalidades: 7.1. "
+          "La autorización del titular para el tratamiento de sus datos personales es previa.\n\n"
+          "La autorización se obtiene por avisos visibles en las zonas monitoreadas. 7.6.")
+    r = segment_plain_text(tx)
+    for c in r["clauses"]:
+        assert not c.rstrip().endswith(("7.1.", "7.6.")), c
+    assert r["clauses"][0].startswith("Los datos serán tratados")
+    assert "La autorización del titular para el tratamiento" in " ".join(r["clauses"])
+    assert r["stats"]["n_clauses_final"] == 2
+
+
+def test_trailing_number_is_kept_when_it_is_legal_content():
+    # Guarda de falsos positivos: una referencia legal SÍ termina en número.
+    tx = ("El responsable aplicará lo previsto en el artículo 6.\n\n"
+          "El encargado seguirá el numeral 4.2.\n\n"
+          "Última fecha de actualización del documento 20 de agosto de 2026.")
+    r = segment_plain_text(tx)
+    joined = " ".join(r["clauses"])
+    assert "artículo 6." in joined
+    assert "numeral 4.2." in joined
+    assert "20 de agosto de 2026." in joined
+
+
 def test_build_questions_self_contained():
     qs = build_questions({"a": "El responsable conservará la prueba de la autorización."})
     instr = qs["a"]["instructions"]

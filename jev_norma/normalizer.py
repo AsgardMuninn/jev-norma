@@ -61,6 +61,35 @@ PAGE_HEADER_PAT = re.compile(r"\bp[aá]gina\s+\d+\s*(?:de|sl\.?|/)\s*\d*\b", re.
 NUMERACION_PAT = re.compile(r"^\(?\d{1,3}(?:[.)]\d{1,3})*[.)]?\)?$")
 NUMERACION_MAX_CHARS = 15
 
+# WU22b-fix2: cuando la numeración va PEGADA al final del párrafo ("...siguientes
+# finalidades: 7.1. Autorización..."), el separador de oraciones no la aísla y el token queda
+# como sufijo de la cláusula: viaja al gate como ruido y aparece en el reporte. Se recorta
+# SÓLO si es un marcador de sección (1-2 dígitos por grupo, punto final) y no una referencia
+# legal ni una fecha.
+SUFIJO_NUMERACION_PAT = re.compile(r"\s+(\d{1,2}(?:\.\d{1,2}){0,2})\.$")
+REFERENCIA_LEGAL_PAT = re.compile(
+    r"\b(?:art[íi]culo|art\.|numeral|literal|[íi]tem|punto|secci[óo]n|cap[íi]tulo|anexo|ley|"
+    r"decreto|resoluci[óo]n|circular|ordinal|par[áa]grafo|cl[áa]usula|inciso|libro|t[íi]tulo|"
+    r"p[áa]gina)\s*$",
+    re.IGNORECASE,
+)
+
+
+def strip_trailing_numbering(txt: str) -> str:
+    """Quita un marcador de sección pegado al final de la cláusula ("... finalidades: 7.1.").
+
+    No toca referencias legales ("artículo 6.", "numeral 4.2.") ni fechas ("20 de agosto de
+    2026."): el marcador es 1-2 dígitos por grupo y 1-3 grupos, con punto final.
+    """
+    s = txt.rstrip()
+    m = SUFIJO_NUMERACION_PAT.search(s)
+    if not m:
+        return txt
+    head = s[: m.start()].rstrip()
+    if not head or REFERENCIA_LEGAL_PAT.search(head):
+        return txt
+    return head
+
 
 def is_numbering_fragment(txt: str) -> bool:
     """True si el texto es SOLO un número de enumeración/binario ("1.", "2.4.", "3)", "(7.2)").
@@ -204,7 +233,7 @@ def segment_plain_text(text: str, max_chars: int = MAX_CLAUSE_CHARS) -> dict:
                 continue
             if looks_like_header(raw_s) or is_numbering_fragment(raw_s):
                 if buf:
-                    clauses.append(buf)
+                    clauses.append(strip_trailing_numbering(buf))
                     buf = ""
                 continue
             if not buf:
@@ -212,10 +241,10 @@ def segment_plain_text(text: str, max_chars: int = MAX_CLAUSE_CHARS) -> dict:
             elif len(buf) + len(raw_s) + 1 <= max_chars:
                 buf = buf + " " + raw_s
             else:
-                clauses.append(buf)
+                clauses.append(strip_trailing_numbering(buf))
                 buf = raw_s
         if buf:
-            clauses.append(buf)
+            clauses.append(strip_trailing_numbering(buf))
 
     return {
         "clauses": [c for c in clauses if c],
