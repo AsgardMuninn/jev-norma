@@ -1,0 +1,210 @@
+{
+  "wu": "WU22b-fix3-medicion",
+  "fecha": "2026-11-15T11:04:14-05:00",
+  "pregunta": "looks_like_header() marca como cabecera cualquier fragmento <=70 chars que empiece con autori/finalidad/princi/... aunque esté en minúsculas (HEADER_PAT es case-insensitive) y lo descarta del gate: ¿pasa en documentos reales?",
+  "precondicion_del_checkpoint": "medir Nequi HTML + 3 documentos más; >=1 descarte con ratio de mayúsculas <0.6 => defecto real",
+  "definicion_de_defecto": "descartes_solo_por_patron = fragmento clasificado cabecera con ratio de mayúsculas <0.6, aceptado únicamente por HEADER_PAT (prefijo, IGNORECASE). contenido_perdido = subconjunto que además es texto de cuerpo: en HTML un <p> que es oración completa (termina en . ? ! y >=4 palabras); en texto plano una línea que continúa la oración anterior (texto antes en la misma línea o línea previa sin cierre . : ; ! ?)",
+  "corpus": [
+    {
+      "id": "nequi-html",
+      "procedencia": "https://www.nequi.com.co/legal/informacion/politica-para-el-tratamiento-de-datos-personales-de-nequi-s-a",
+      "sha256_fuente": "2785e52f5e814b0e1eb7447c176fb59f75c5f240a5c76a13b9efadd00f68832c",
+      "n_p_blocks_cabecera": 2,
+      "cabeceras_por_mayusculas": 0,
+      "descartes_solo_por_patron": 2,
+      "ejemplos_descarte": [
+        {
+          "texto": "Clientes y/o usuarios",
+          "chars": 21,
+          "ratio_mayusculas": 0.056,
+          "header_pat": true,
+          "termina_en_punto": false
+        },
+        {
+          "texto": "Revocatoria de la autorización",
+          "chars": 30,
+          "ratio_mayusculas": 0.037,
+          "header_pat": true,
+          "termina_en_punto": false
+        }
+      ],
+      "contenido_perdido": 0,
+      "ejemplos_contenido_perdido": [],
+      "chars_contenido_descartado": 0,
+      "clausulas": 101,
+      "cabeceras_totales_normalizador": 3
+    },
+    {
+      "id": "cisa-html",
+      "procedencia": "https://www.cisa.gov.co/contenido/sesion/la-entidad/quienes-somos/politica-de-tratamiento-de-datos-personales",
+      "sha256_fuente": "0d8c5743a6f4ea09ec0f9d12d90a112ee2da928e8b8995e738cf6af66791167d",
+      "nota": "SPA: el HTML servido no trae ni un <p> ni <main>/<article> (0 cláusulas). Queda en el corpus como punto NO evaluable para cabeceras: no hay bloques que clasificar, y el fallo de extracción en páginas renderizadas por JS es un hallazgo aparte, no este.",
+      "n_p_blocks_cabecera": 0,
+      "cabeceras_por_mayusculas": 0,
+      "descartes_solo_por_patron": 0,
+      "ejemplos_descarte": [],
+      "contenido_perdido": 0,
+      "ejemplos_contenido_perdido": [],
+      "chars_contenido_descartado": 0,
+      "clausulas": 0,
+      "cabeceras_totales_normalizador": 0
+    },
+    {
+      "id": "bancolombia-html",
+      "procedencia": "https://bancolombia.com/personas/documentos-legales/proteccion-datos/bancolombia-sa",
+      "sha256_fuente": "84cc2dae4b62f144e7f974591774978af7ef46dbdf01cb775af7593c684b12dc",
+      "n_p_blocks_cabecera": 2,
+      "cabeceras_por_mayusculas": 0,
+      "descartes_solo_por_patron": 2,
+      "ejemplos_descarte": [
+        {
+          "texto": "Clientes y/o usuarios",
+          "chars": 21,
+          "ratio_mayusculas": 0.056,
+          "header_pat": true,
+          "termina_en_punto": false
+        },
+        {
+          "texto": "Revocatoria de la autorización",
+          "chars": 30,
+          "ratio_mayusculas": 0.037,
+          "header_pat": true,
+          "termina_en_punto": false
+        }
+      ],
+      "contenido_perdido": 0,
+      "ejemplos_contenido_perdido": [],
+      "chars_contenido_descartado": 0,
+      "clausulas": 99,
+      "cabeceras_totales_normalizador": 24
+    },
+    {
+      "id": "mercadolibre-html",
+      "procedencia": "https://www.mercadolibre.com.co/privacidad",
+      "sha256_fuente": "36e0d3dbcec52da52f056d4b6275f56248623dd13bffb64d44d891aae649b498",
+      "n_p_blocks_cabecera": 0,
+      "cabeceras_por_mayusculas": 0,
+      "descartes_solo_por_patron": 0,
+      "ejemplos_descarte": [],
+      "contenido_perdido": 0,
+      "ejemplos_contenido_perdido": [],
+      "chars_contenido_descartado": 0,
+      "clausulas": 23,
+      "cabeceras_totales_normalizador": 28
+    },
+    {
+      "id": "logistral-pdf",
+      "procedencia": "wu22/logistral_politica.pdf",
+      "sha256_fuente": "3bf38418971307ad08e8641123bac95c63ae805b47f8183619b63592fa481179",
+      "n_p_blocks_cabecera": 36,
+      "cabeceras_por_mayusculas": 33,
+      "descartes_solo_por_patron": 3,
+      "ejemplos_descarte": [
+        {
+          "texto": "tratamiento de sus datos biométricos y geolocalización.",
+          "chars": 55,
+          "ratio_mayusculas": 0.0,
+          "header_pat": true,
+          "continuacion_de_oracion": true,
+          "previo": "os dispuestos para tal fin. El titular no está obligado a autorizar el",
+          "texto_antes_en_la_linea": false
+        },
+        {
+          "texto": "finalidades:",
+          "chars": 12,
+          "ratio_mayusculas": 0.0,
+          "header_pat": true,
+          "continuacion_de_oracion": true,
+          "previo": "es recolectados por LOGISTRAL S.A.S. serán tratados con las siguientes",
+          "texto_antes_en_la_linea": false
+        },
+        {
+          "texto": "autorización para ello.",
+          "chars": 23,
+          "ratio_mayusculas": 0.0,
+          "header_pat": true,
+          "continuacion_de_oracion": true,
+          "previo": "ofertas especiales y catalogo técnico, cuando el titular haya otorgado",
+          "texto_antes_en_la_linea": false
+        }
+      ],
+      "contenido_perdido": 3,
+      "ejemplos_contenido_perdido": [
+        {
+          "texto": "tratamiento de sus datos biométricos y geolocalización.",
+          "chars": 55,
+          "ratio_mayusculas": 0.0,
+          "header_pat": true,
+          "continuacion_de_oracion": true,
+          "previo": "os dispuestos para tal fin. El titular no está obligado a autorizar el",
+          "texto_antes_en_la_linea": false
+        },
+        {
+          "texto": "finalidades:",
+          "chars": 12,
+          "ratio_mayusculas": 0.0,
+          "header_pat": true,
+          "continuacion_de_oracion": true,
+          "previo": "es recolectados por LOGISTRAL S.A.S. serán tratados con las siguientes",
+          "texto_antes_en_la_linea": false
+        },
+        {
+          "texto": "autorización para ello.",
+          "chars": 23,
+          "ratio_mayusculas": 0.0,
+          "header_pat": true,
+          "continuacion_de_oracion": true,
+          "previo": "ofertas especiales y catalogo técnico, cuando el titular haya otorgado",
+          "texto_antes_en_la_linea": false
+        }
+      ],
+      "chars_contenido_descartado": 90,
+      "clausulas": 38,
+      "cabeceras_totales_normalizador": 0
+    },
+    {
+      "id": "banrep-html",
+      "procedencia": "tests/banrep_fixture.html",
+      "sha256_fuente": "0e205d9257e67e176a3201fe8a828387b95168059fd2f2a8fa06c38f3b8b2365",
+      "n_p_blocks_cabecera": 0,
+      "cabeceras_por_mayusculas": 0,
+      "descartes_solo_por_patron": 0,
+      "ejemplos_descarte": [],
+      "contenido_perdido": 0,
+      "ejemplos_contenido_perdido": [],
+      "chars_contenido_descartado": 0,
+      "clausulas": 23,
+      "cabeceras_totales_normalizador": 9
+    }
+  ],
+  "docs_con_clausulas": [
+    "nequi-html",
+    "bancolombia-html",
+    "mercadolibre-html",
+    "logistral-pdf",
+    "banrep-html"
+  ],
+  "docs_evaluables": [
+    "nequi-html",
+    "bancolombia-html",
+    "mercadolibre-html",
+    "logistral-pdf",
+    "banrep-html"
+  ],
+  "docs_no_evaluables": [
+    "cisa-html"
+  ],
+  "totales": {
+    "docs": 6,
+    "descartes_solo_por_patron": 7,
+    "contenido_perdido": 3,
+    "chars_contenido_descartado": 90,
+    "contenido_perdido_html": 0,
+    "contenido_perdido_pdf": 3,
+    "cabeceras_mayusculas": 33
+  },
+  "veredicto": "DEFECTO_REAL",
+  "alcance": "ruta de texto plano/PDF (segment_plain_text): la cola de oración partida por el extractor se descarta como cabecera y la cláusula queda truncada a media frase. En HTML los 4 descartes medidos son subtítulos reales en title case ('Clientes y/o usuarios', 'Revocatoria de la autorización'): ahí el prefijo hace lo correcto y un guard por mayúsculas los rompería.",
+  "api_calls": 0,
+  "costo_usd": 0.0
+}

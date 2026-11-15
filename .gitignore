@@ -13,3 +13,6 @@ venv/
 bench_ocr_parallel.py
 make_scanned_fixture.py
 wu22/*.pdf
+# corpus de medición WU22b-fix3: HTML de terceros descargado (se re-baja con --refetch);
+# los sha256 de cada fuente quedan en wu22b/evidence-wu22b-fix3-headers.json
+wu22b/corpus/
