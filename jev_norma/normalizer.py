@@ -48,7 +48,10 @@ CONTACT_ANYWHERE = re.compile(
     re.I,
 )
 
-_SENT_SPLIT = re.compile(r"(?<=[.;])\s+(?=[A-ZÁÉÍÓÚÑ0-9¿¡\"'«])")
+# Separador de oraciones que NO consume el espacio: cada fragmento conserva su sangría, y
+# esa sangría (con el sentinel de línea) es la que dice si ocupa su línea completa
+# (WU22b-fix3).
+_SENT_SPLIT_LEAD = re.compile(r"(?<=[.;])(?=\s+[A-ZÁÉÍÓÚÑ0-9¿¡\"'«])")
 
 # WU18: cabeceras de página numéricas de extracciones PDF ("Página 3 de 11",
 # "Página 4 de 11") se cuelan como cláusulas (vistas en WU17, Logistral d00/d24).
@@ -117,6 +120,60 @@ def looks_like_header(txt: str) -> bool:
     if alpha and upper / alpha >= 0.6:
         return True
     return bool(HEADER_PAT.match(txt))
+
+
+def _mayusculas_predominantes(txt: str) -> bool:
+    alpha = sum(c.isalpha() for c in txt)
+    upper = sum(c.isupper() for c in txt if c.isalpha())
+    return bool(alpha) and upper / alpha >= 0.6
+
+
+_CIERRE_ORACION = (".", ":", ";", "!", "?")
+
+def _cierra_oracion(txt: str) -> bool:
+    """¿El fragmento termina una oración? (ignora comillas/paréntesis de cierre)."""
+    t = txt.rstrip().rstrip("\"'\u201d\u00bb)]").rstrip()
+    return t.endswith(_CIERRE_ORACION)
+
+
+def _cuerpo_gatieable(cuerpo: str, ocupa_linea: bool) -> str:
+    """Texto plano: decide si el fragmento es cabecera (boundary) o contenido.
+
+    `cuerpo` conserva los saltos de línea del extractor. `ocupa_linea` dice si el fragmento
+    ocupa su línea completa (nada antes ni después en la misma línea).
+
+    Regla (WU22b-fix3): lo único que se puede borrar es lo que ya borraba
+    `looks_like_header` sobre el texto UNIDO. Si el fragmento trae cuerpo (saltos de línea
+    internos, p.ej. "INTRODUCCIÓN \\nLOGISTRAL S.A.S., identificada con NIT. 900.161.726-3"),
+    se recortan SÓLO las líneas de cabecera iniciales y el cuerpo se queda: antes se perdía
+    entero y la cláusula quedaba sin sujeto ("900.161.726-3, empresa colombiana ...").
+    Si no hay cuerpo recuperable (el resto es otra cabecera, numeración o un marcador de
+    lista "a.") se mantiene el comportamiento previo: boundary.
+    """
+    plano = re.sub(r"\s+", " ", cuerpo).strip()
+    if is_numbering_fragment(plano):
+        return ""  # numeración sola: nunca es contenido legal
+    if not looks_like_header(plano):
+        return plano
+    if "\n" not in cuerpo:
+        # Sin cuerpo pegado: cabecera real si ocupa su línea; si no, es cola de oración.
+        # Una prosa que sólo matchea HEADER_PAT (minúsculas + cierra oración) se queda.
+        return "" if ocupa_linea else plano
+    resto = cuerpo
+    while "\n" in resto:
+        cabeza, resto = resto.split("\n", 1)
+        cabeza, resto = cabeza.strip(), resto.strip()
+        if not cabeza:
+            continue
+        if not (_mayusculas_predominantes(cabeza) and looks_like_header(cabeza)):
+            # La cabecera inicial no está completa (el extractor partió el título): no se
+            # puede separar sin arriesgar contenido -> se conserva el fragmento entero.
+            return plano
+    if not resto or (looks_like_header(resto) and _mayusculas_predominantes(resto)):
+        return ""
+    if len(resto.split()) < 3:  # "a." / "3.1." / restos sin prosa: nada que recuperar
+        return ""
+    return re.sub(r"\s+", " ", resto).strip()
 
 
 def extract_content(raw_html: str) -> str:
@@ -208,10 +265,11 @@ def normalize_clauses_general(raw_html: str) -> dict:
 def segment_plain_text(text: str, max_chars: int = MAX_CLAUSE_CHARS) -> dict:
     """Texto plano (PDF extraído) -> cláusulas gatieables (sin IA).
 
-    pypdf/texto legal extraído casi nunca conserva párrafos separados; se normaliza el flujo
-    a espacios, se divide en oraciones sobre párrafos/saltos/puntuación (. ; :) y se
-    re-empaquetan oraciones cortas en cláusulas de hasta `max_chars`. Cabeceras de sección
-    (línea corta en mayúsculas) son boundaries no-cláusula. Descarta boilerplate corto.
+    El texto se re-empaqueta en cláusulas de hasta `max_chars` sobre párrafos/saltos y
+    puntuación (. ; :). Desde WU22b-fix3 se conserva la POSICIÓN de los saltos de línea:
+    sin esa información la cola de una oración partida por el extractor era indistinguible
+    de una cabecera de sección y se descartaba contenido legal (ver `_es_cabecera`).
+    Descarta boilerplate corto; la numeración suelta sigue siendo boundary.
     """
     t0 = time.monotonic()
     raw_chunks = re.split(r"\n\s*\n", text)
@@ -220,29 +278,46 @@ def segment_plain_text(text: str, max_chars: int = MAX_CLAUSE_CHARS) -> dict:
         # WU18: quitar cabeceras de página numéricas ("Página 3 de 11"), tanto como
         # línea propia como incrustadas a mitad de párrafo por el extractor PDF.
         ch = PAGE_HEADER_PAT.sub(" ", ch)
-        joined = re.sub(r"\s+", " ", ch).strip()
+        # Sentinel de línea: los espacios se colapsan, los saltos de línea NO.
+        ch = re.sub(r"[^\S\n]*\n[^\S\n]*", "\n", ch)
+        joined = re.sub(r"[^\S\n]+", " ", ch).strip()
         if not joined:
             continue
-        parts = _SENT_SPLIT.split(joined)
+        parts = _SENT_SPLIT_LEAD.split(joined)
         buf = ""
-        for s in parts:
-            raw_s = s.strip()
-            if not raw_s:
+        previa_numeracion = False
+        for i, part in enumerate(parts):
+            cuerpo = part.strip()
+            if not cuerpo:
                 continue
-            if BOILERPLATE_PAT.match(raw_s) or (len(raw_s) <= CONTACT_MAX_CHARS and CONTACT_ANYWHERE.search(raw_s)):
+            lead = part[: len(part) - len(part.lstrip())]
+            sig_lead = ""
+            if i + 1 < len(parts):
+                nxt = parts[i + 1]
+                sig_lead = nxt[: len(nxt) - len(nxt.lstrip())]
+            sin_salto = "\n" not in cuerpo
+            abre_linea = i == 0 or "\n" in lead or previa_numeracion
+            cierra_linea = i + 1 == len(parts) or "\n" in sig_lead
+            ocupa_linea = sin_salto and abre_linea and cierra_linea
+            plano = re.sub(r"\s+", " ", cuerpo).strip()
+            previa_numeracion = is_numbering_fragment(plano)
+            if BOILERPLATE_PAT.match(plano) or (
+                len(plano) <= CONTACT_MAX_CHARS and CONTACT_ANYWHERE.search(plano)
+            ):
                 continue
-            if looks_like_header(raw_s) or is_numbering_fragment(raw_s):
+            contenido = _cuerpo_gatieable(cuerpo, ocupa_linea)
+            if not contenido:
                 if buf:
                     clauses.append(strip_trailing_numbering(buf))
                     buf = ""
                 continue
             if not buf:
-                buf = raw_s
-            elif len(buf) + len(raw_s) + 1 <= max_chars:
-                buf = buf + " " + raw_s
+                buf = contenido
+            elif len(buf) + len(contenido) + 1 <= max_chars:
+                buf = buf + " " + contenido
             else:
                 clauses.append(strip_trailing_numbering(buf))
-                buf = raw_s
+                buf = contenido
         if buf:
             clauses.append(strip_trailing_numbering(buf))
 

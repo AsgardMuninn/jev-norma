@@ -157,6 +157,56 @@ def test_trailing_number_is_kept_when_it_is_legal_content():
     assert "20 de agosto de 2026." in joined
 
 
+def test_segment_plain_text_keeps_body_subject_after_heading_line():
+    # WU22b-fix3: el extractor PDF deja la cabecera en su propia línea y el cuerpo en la
+    # siguiente. La línea de cuerpo empieza con siglas en mayúsculas ("LOGISTRAL S.A.S."),
+    # así que looks_like_header() (ratio >= 0.6) la borraba ENTERA: la cláusula arrancaba
+    # en el NIT, sin sujeto -> "900.161.726-3, empresa colombiana ...".
+    tx = ("INTRODUCCIÓN \n"
+          "LOGISTRAL S.A.S., identificada con NIT. 900.161.726-3, empresa colombiana "
+          "domiciliada en La Estrella (Antioquia), dedicada al almacenamiento de cargas.\n"
+          "OBJETO: La presente Política desarrolla el derecho de Habeas Data.")
+    r = segment_plain_text(tx)
+    joined = " ".join(r["clauses"])
+    assert "identificada con NIT." in joined
+    assert r["clauses"][0].startswith("LOGISTRAL S.A.S., identificada con NIT.")
+    assert "900.161.726-3" in r["clauses"][0]
+    assert "INTRODUCCIÓN" not in joined  # la cabecera sola sí es boundary
+
+
+def test_short_body_sentence_starting_with_header_prefix_is_kept():
+    # WU22b-fix3: HEADER_PAT (IGNORECASE) borraba cualquier fragmento corto que empezara
+    # con "tratamiento/autori/finalidad/princi...", aunque fuera una oración del cuerpo.
+    tx = ("La autorización es previa, expresa e informada. "
+          "Tratamiento de datos biométricos.")
+    r = segment_plain_text(tx)
+    joined = " ".join(r["clauses"])
+    assert "Tratamiento de datos biométricos." in joined
+
+
+def test_header_inside_a_line_is_not_a_boundary():
+    # Sin estructura de líneas, la cola de una oración que empieza con "autori..." era
+    # indistinguible de una cabecera. Si hay texto ANTES en la misma línea, no es cabecera.
+    tx = ("Cuando el titular haya otorgado autorización para ello. "
+          "Autorización que se conserva por escrito en el archivo del responsable.")
+    r = segment_plain_text(tx)
+    joined = " ".join(r["clauses"])
+    assert "autorización para ello." in joined
+    assert "Autorización que se conserva por escrito" in joined
+
+
+def test_uppercase_section_header_is_still_a_boundary():
+    # Regresión: una cabecera de sección real (línea sola, mayúsculas) sigue sin ser cláusula.
+    tx = ("La sociedad conservará la prueba de la autorización.\n"
+          "7. FINALIDADES DEL TRATAMIENTO\n"
+          "Los datos serán tratados con las siguientes finalidades.")
+    r = segment_plain_text(tx)
+    joined = "\n".join(r["clauses"])
+    assert "FINALIDADES DEL TRATAMIENTO" not in " ".join(c for c in r["clauses"] if c.isupper())
+    assert "La sociedad conservará la prueba" in joined
+    assert "Los datos serán tratados" in joined
+
+
 def test_build_questions_self_contained():
     qs = build_questions({"a": "El responsable conservará la prueba de la autorización."})
     instr = qs["a"]["instructions"]

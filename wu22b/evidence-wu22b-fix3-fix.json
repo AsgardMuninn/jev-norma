@@ -1,0 +1,73 @@
+{
+ "wu": "WU22b-fix3",
+ "fecha": "2026-11-15",
+ "pregunta": "¿el descarte de cabeceras borra cuerpo legal en la ruta PDF, y se recupera sin tocar la agrupación ni el HTML?",
+ "fuentes": {
+  "pdf": {
+   "path": "wu22/logistral_politica.pdf",
+   "sha256": "000aca0bbb38606c928b4ded6e213380557a02e788b30268be444b5c80274c37"
+  },
+  "html": {
+   "path": "tests/banrep_fixture.html",
+   "sha256": "0e205d9257e67e176a3201fe8a828387b95168059fd2f2a8fa06c38f3b8b2365"
+  },
+  "packet": {
+   "path": "wu22b/packet_blind.jsonl",
+   "sha256": "fd5f636894861b345cfb358e7001dfd3f72221374444bec580f3c00b75b19c9a"
+  }
+ },
+ "regla_previa": "f8fb060: looks_like_header(fragmento) -> se descarta el fragmento completo",
+ "regla_nueva": "fragmento multilínea: se recortan las líneas de cabecera iniciales y el cuerpo se conserva",
+ "medido": {
+  "pdf": {
+   "n_clauses_previa": 38,
+   "n_clauses_nueva": 38,
+   "chars_previa": 20834,
+   "chars_nueva": 20874,
+   "delta_chars": 40,
+   "clausulas_cambiadas": 1,
+   "contenido_perdido": 0,
+   "contenido_recuperado": 1,
+   "recuperado": [
+    {
+     "chars": 39,
+     "texto": "LOGISTRAL S.A.S., identificada con NIT.",
+     "literal_en_la_fuente": true,
+     "clausula_previa": "900.161.726-3, empresa colombiana domiciliada La Estrella (Antioquia), dedicada al diseño, fabricación, comercialización",
+     "clausula_nueva": "LOGISTRAL S.A.S., identificada con NIT. 900.161.726-3, empresa colombiana domiciliada La Estrella (Antioquia), dedicada al diseño, fabricación, comercialización"
+    }
+   ],
+   "clausulas_sin_cierre": 0,
+   "ejemplos_sin_cierre": [],
+   "fragmentos_wu_presentes": {
+    "tratamiento de sus datos biométricos y geolocalización.": true,
+    "siguientes finalidades:": true,
+    "otorgado autorización para ello.": true
+   }
+  },
+  "html": {
+   "n_clauses_previa": 23,
+   "n_clauses_nueva": 23,
+   "identicas": true
+  },
+  "packet_blind": {
+   "filas_logistral": 26,
+   "sin_match": [],
+   "nota": "L001 cambia a propósito: recupera 'LOGISTRAL S.A.S., identificada con NIT.' (sujeto de la cláusula etiquetada); el resto de filas sigue apareciendo literal"
+  },
+  "api_calls": 0,
+  "costo_usd": 0.0
+ },
+ "checks": {
+  "contenido_perdido_cero": true,
+  "contenido_recuperado_no_vacio": true,
+  "recuperado_literal_en_fuente": true,
+  "n_clauses_igual": true,
+  "sin_truncamiento": true,
+  "fragmentos_wu_presentes": true,
+  "html_intacto_23": true,
+  "packet_sin_regresion": true,
+  "sin_llamadas_api": true
+ },
+ "checks_ok": true
+}
